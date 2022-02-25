@@ -30,7 +30,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: frontend
+          image: anthonyangelo/frontend:latest
           ports:
           - containerPort: 8080
           readinessProbe:
