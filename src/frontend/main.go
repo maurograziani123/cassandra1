@@ -33,6 +33,10 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"google.golang.org/grpc"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 const (
@@ -53,6 +57,15 @@ var (
 		"JPY": true,
 		"GBP": true,
 		"TRY": true}
+
+	reg = prometheus.NewRegistry()
+	requestCount = promauto.With(reg).NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "example_requests_total",
+			Help: "Total number of HTTP requests by status code and method.",
+		},
+		[]string{"code", "method"},
+	)		
 )
 
 type ctxKeySessionID struct{}
@@ -131,7 +144,7 @@ func main() {
 	mustConnGRPC(ctx, &svc.adSvcConn, svc.adSvcAddr)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", svc.homeHandler).Methods(http.MethodGet, http.MethodHead)
+	r.Path("/").Handler(promhttp.InstrumentHandlerCounter(requestCount, http.HandlerFunc(svc.homeHandler))).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/product/{id}", svc.productHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/cart", svc.viewCartHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/cart", svc.addToCartHandler).Methods(http.MethodPost)
@@ -142,6 +155,7 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "User-agent: *\nDisallow: /") })
 	r.HandleFunc("/_healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "ok") })
+	r.Path("/metrics").Handler(promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))
 
 	var handler http.Handler = r
 	handler = &logHandler{log: log, next: handler} // add logging
