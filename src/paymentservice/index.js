@@ -29,47 +29,7 @@
 //   }
 // });
 
-<<<<<<< HEAD
 'use strict';
-=======
-
-if(process.env.DISABLE_PROFILER) {
-  console.log("Profiler disabled.")
-}
-else {
-  console.log("Profiler enabled.")
-  require('@google-cloud/profiler').start({
-    serviceContext: {
-      service: 'paymentservice',
-      version: '1.0.0'
-    }
-  });
-}
-
-
-if(process.env.DISABLE_TRACING) {
-  console.log("Tracing disabled.")
-}
-else {
-  console.log("Tracing enabled.")
-  require('@google-cloud/trace-agent').start();
-
-}
-
-if(process.env.DISABLE_DEBUGGER) {
-  console.log("Debugger disabled.")
-}
-else {
-  console.log("Debugger enabled.")
-  require('@google-cloud/debug-agent').start({
-    serviceContext: {
-      service: 'paymentservice',
-      version: 'VERSION'
-    }
-  });
-}
-
->>>>>>> 88d4da5efa4a26168f2052216d414d2583ce7c0a
 
 const path = require('path');
 const HipsterShopServer = require('./server');
