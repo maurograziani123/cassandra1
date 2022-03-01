@@ -1,6 +1,4 @@
-<p align="center">
-<img src="./src/frontend/static/icons/Hipster_HeroLogo.svg" width="300" alt="Online Boutique" />
-</p>
+![Online Boutique](./src/frontend/static/icons/Hipster_HeroLogoCyan.svg)
 
 
 ![Continuous Integration](https://github.com/GoogleCloudPlatform/microservices-demo/workflows/Continuous%20Integration%20-%20Master/Release/badge.svg)
