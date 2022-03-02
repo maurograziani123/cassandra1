@@ -35,5 +35,5 @@ stages:
             cd hack/
             # Docker Login
             echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin
-            # REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-images.sh
+            REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-images.sh
           displayName: 'Building All Images...'
