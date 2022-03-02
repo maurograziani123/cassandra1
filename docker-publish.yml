@@ -25,11 +25,13 @@ pool:
 stages:
 
   #### Build Image Stage ####
-  - stage: Build_Image
+  - stage: Build_All_Images
     jobs:
-      - job: Build_Image
+      - job: Build_All_Images
         steps:
-        - script: |
+        - bash: |
+            set -x # Echo Commands
+            # Builld All Images
             cd hack/
             ls -la
-          displayName: 'Building Image...'
+          displayName: 'Building All Images...'
