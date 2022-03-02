@@ -34,6 +34,6 @@ stages:
             # Builld All Images
             cd hack/
             # Docker Login
-            docker login -u $(repoUserName) -p $(repoPassword)
+            echo $(repoPassword} | docker login --username $(repoUserName) --password-stdin
             # REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-images.sh
           displayName: 'Building All Images...'
