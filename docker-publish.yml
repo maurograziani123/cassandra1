@@ -16,7 +16,7 @@ variables:
 
   ### Variables ###
   repoUserName: '$(REPO_USERNAME)'
-  repoPassword: '$(REPO_PASSWORD)'
+  repoPAT: '$(REPO_PAT)'
   repoPrefix: '$(REPO_PREFIX)'
 
 pool:
@@ -34,6 +34,6 @@ stages:
             # Builld All Images
             cd hack/
             # Docker Login
-            echo $(repoPassword) | docker login --username $(repoUserName) --password-stdin
+            echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin
             # REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-images.sh
           displayName: 'Building All Images...'
