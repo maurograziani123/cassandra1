@@ -1,5 +1,4 @@
-![Online Boutique](./src/frontend/static/icons/Hipster_HeroLogo.svg)
-
+![Online Boutique](./docs/img/hipster-logo.png)
 
 ![Continuous Integration](https://github.com/GoogleCloudPlatform/microservices-demo/workflows/Continuous%20Integration%20-%20Main/Release/badge.svg)
 
