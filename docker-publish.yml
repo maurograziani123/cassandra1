@@ -15,9 +15,7 @@ trigger:
 variables:
 
   ### Variables ###
-  key1: 'value1'
-  key2: 'value2'
-  key3: 'value3'    
+  serviceMap: '$(REPO_PREFIX)'
 
 pool:
   vmImage: ubuntu-latest
@@ -33,5 +31,5 @@ stages:
             set -x # Echo Commands
             # Builld All Images
             cd hack/
-            ls -la
+            REPO_PREFIX=anthonyangelo TAG=latest ./make-docker-images.sh
           displayName: 'Building All Images...'
