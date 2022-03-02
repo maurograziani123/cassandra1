@@ -3,17 +3,35 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# trigger:
+# - none
+# - master
+
 trigger:
-- main
+  branches:
+    include:
+    - build
+
+variables:
+
+  ### Variables ###
+  key1: 'value1'
+  key2: 'value2'
+  key3: 'value3'    
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  #### Build Image Stage ####
+  - stage: Build_Artifact
+    jobs:
+      - job: Build_Artifact
+        steps:
+        - script: echo Hello, world!
+          displayName: 'Run a one-line script'
+        - script: |
+            echo Add other tasks to build, test, and deploy your project.
+            echo See https://aka.ms/yaml
+          displayName: 'Run a multi-line script'
