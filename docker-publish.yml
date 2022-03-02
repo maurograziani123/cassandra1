@@ -25,13 +25,11 @@ pool:
 stages:
 
   #### Build Image Stage ####
-  - stage: Build_Artifact
+  - stage: Build_Image
     jobs:
-      - job: Build_Artifact
+      - job: Build_Image
         steps:
-        - script: echo Hello, world!
-          displayName: 'Run a one-line script'
         - script: |
-            echo Add other tasks to build, test, and deploy your project.
-            echo See https://aka.ms/yaml
-          displayName: 'Run a multi-line script'
+            cd hack/
+            ls -la
+          displayName: 'Building Image...'
