@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# trigger:
+# - none
+# - master
+
+trigger:
+  branches:
+    include:
+    - build
+
+variables:
+
+  ### Variables ###
+  serviceNamespace: $(SERVICE_NAMESPACE)
+  serviceName: $(SERVICE_NAME)
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+
+  #### Build Image Stage ####
+  - stage: Deploy_Image
+    jobs:
+      - job: Deploy_Image
+        steps:
+        - task: Kubernetes@1
+          displayName: 'Deploying Image...'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus-cassandra'
+            namespace: $(serviceNamespace)
+            command: 'apply'
+            arguments: '-f kubernetes-manifests/$(serviceName).yaml'
