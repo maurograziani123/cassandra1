@@ -33,8 +33,8 @@ stages:
           inputs: 
             action: patch
             kind: deployment
-            name: demo-5fbc4d6cd9-pgxn4
+            name: $(serviceName)
             mergeStrategy: strategic
             patch: '{"spec":{"containers":[{"name":"demo","image":"foobar/demo:2239"}]}}'
-            kubernetesServiceConnection: $(serviceName)
+            kubernetesServiceConnection: 'olympus'
             namespace: $(serviceNamespace)
