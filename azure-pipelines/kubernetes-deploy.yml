@@ -28,9 +28,13 @@ stages:
     jobs:
       - job: Deploy_Image
         steps:
-        - bash: |
-            set -x # Echo Commands
-            # Kubectl Login
-            # Deploy Image
-            # kubectl -n ${serviceNamespace} apply -f ../../kubernetes-manifests/${serviceName}.yaml
+        - task: Kubernetes@1
           displayName: 'Deploying Image...'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus-cassandra'
+            namespace: 'cassandra'
+            command: 'apply'
+            arguments: '-f ../../kubernetes-manifests/${serviceName}.yaml'
+            secretType: 'dockerRegistry'
+            containerRegistryType: 'Azure Container Registry'
