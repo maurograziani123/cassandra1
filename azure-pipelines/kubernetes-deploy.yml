@@ -15,7 +15,7 @@ trigger:
 variables:
 
   ### Variables ###
-  serviceNamespace: '$(SERVICE_NAMESPACE)'
+  serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
 pool:
@@ -33,8 +33,8 @@ stages:
           inputs:
             connectionType: 'Kubernetes Service Connection'
             kubernetesServiceEndpoint: 'olympus-cassandra'
-            namespace: cassandra
+            namespace: $(serviceNamespace)
             command: 'apply'
-            arguments: '-f kubernetes-manifests/frontend.yaml'
+            arguments: '-f kubernetes-manifests/$(serviceName).yaml'
             secretType: 'dockerRegistry'
             containerRegistryType: 'Azure Container Registry'
