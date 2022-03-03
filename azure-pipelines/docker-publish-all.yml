@@ -4,13 +4,9 @@
 # https://aka.ms/yaml
 
 # trigger:
-# - none
-# - master
-
-trigger:
-  branches:
-    include:
-    - build
+#   branches:
+#     include:
+#     - build
 
 variables:
 
