@@ -36,5 +36,3 @@ stages:
             namespace: $(serviceNamespace)
             command: 'apply'
             arguments: '-f kubernetes-manifests/$(serviceName).yaml'
-            # secretType: 'dockerRegistry'
-            # containerRegistryType: 'Azure Container Registry'
