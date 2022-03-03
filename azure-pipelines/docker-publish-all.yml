@@ -5,7 +5,7 @@
 
 trigger:
 - none
-- master
+# - master
 
 # trigger:
 #   branches:
