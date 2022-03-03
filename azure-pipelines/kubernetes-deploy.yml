@@ -32,7 +32,7 @@ stages:
           displayName: 'Deploying Image...'
           inputs:
             connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'olympus-cassandra'
+            kubernetesServiceEndpoint: 'olympus'
             namespace: $(serviceNamespace)
             command: 'apply'
             arguments: '-f kubernetes-manifests/$(serviceName).yaml'
