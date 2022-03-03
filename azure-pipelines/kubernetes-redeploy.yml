@@ -36,6 +36,6 @@ stages:
             name: $(serviceName)
             mergeStrategy: strategic
             # patch: '{"spec":{"containers":[{"name":"demo","image":"foobar/demo:2239"}]}}'
-            patch: '{"spec":{"template":{"metadata":{"labels":{"redeploy":"$(Date:MMddyy)"}}}}}'
+            patch: '{"spec":{"template":{"metadata":{"labels":{"redeploy":"$(Build.BuildNumber)"}}}}}'
             kubernetesServiceConnection: 'olympus'
             namespace: $(serviceNamespace)  
