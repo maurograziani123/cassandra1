@@ -24,15 +24,17 @@ pool:
 stages:
 
   #### Build Image Stage ####
-  - stage: Deploy_Image
+  - stage: Redeploy_Image
     jobs:
-      - job: Deploy_Image
+      - job: Redeploy_Image
         steps:
-        - task: Kubernetes@1
-          displayName: 'Deploying Image...'
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'olympus-cassandra'
+        - task: KubernetesManifest@0
+          displayName: Patch
+          inputs: 
+            action: patch
+            kind: deployment
+            name: demo-5fbc4d6cd9-pgxn4
+            mergeStrategy: strategic
+            patch: '{"spec":{"containers":[{"name":"demo","image":"foobar/demo:2239"}]}}'
+            kubernetesServiceConnection: $(serviceName)
             namespace: $(serviceNamespace)
-            command: 'apply'
-            arguments: '-f kubernetes-manifests/$(serviceName).yaml'
