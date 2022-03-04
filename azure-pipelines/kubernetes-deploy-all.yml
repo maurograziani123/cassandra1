@@ -10,6 +10,7 @@ variables:
 
   ### Variables ###
   serviceNamespace: $(SERVICE_NAMESPACE)
+  repoPrefix: '$(REPO_PREFIX)'
 
 pool:
   vmImage: ubuntu-latest
@@ -27,6 +28,8 @@ stages:
              inputs:
                connectionType: 'Kubernetes Service Connection'
                kubernetesServiceConnection: 'olympus'
-               command: 'install'               
-               chartName: 'boutique'               
+               command: 'install'
+               chartPath: 
+               chartName: 'boutique'
                namespace: $(serviceNamespace)
+               arguments: --set imageRepo=$(repoPrefix)
