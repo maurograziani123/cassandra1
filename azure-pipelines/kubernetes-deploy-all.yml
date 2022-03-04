@@ -28,8 +28,9 @@ stages:
              inputs:
                connectionType: 'Kubernetes Service Connection'
                kubernetesServiceConnection: 'olympus'
-               chartName: 'boutique'               
-               command: 'install'
+               chartName: 'boutique'
+               chartType: FilePath
                chartPath: helm
+               command: 'install'
                namespace: $(serviceNamespace)
                arguments: --set imageRepo=$(repoPrefix)
