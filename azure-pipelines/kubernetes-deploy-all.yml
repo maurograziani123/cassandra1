@@ -34,5 +34,6 @@ stages:
                command: 'upgrade'
                install: true
                force: true
+               resetValues: true
                namespace: $(serviceNamespace)
                arguments: --set imageRepo=$(repoPrefix)
