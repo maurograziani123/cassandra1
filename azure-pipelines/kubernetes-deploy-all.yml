@@ -10,7 +10,6 @@ variables:
 
   ### Variables ###
   serviceNamespace: $(SERVICE_NAMESPACE)
-  serviceName: $(SERVICE_NAME)
 
 pool:
   vmImage: ubuntu-latest
@@ -22,3 +21,10 @@ stages:
     jobs:
       - job: Deploy_All_Images
         steps:
+           - task: HelmDeploy@0
+             inputs:
+               connectionType: 'Kubernetes Service Connection'
+               kubernetesServiceConnection: 'olympus'
+               namespace: $(serviceNamespace)
+               chartName: 'boutique'
+               command: 'install'
