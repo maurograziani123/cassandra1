@@ -21,7 +21,7 @@ stages:
     jobs:
       - job: Deploy_All_Images
         steps:
-           - task: HelmDeploy@0
+           - task: HelmDeploy@0 
              inputs:
                connectionType: 'Kubernetes Service Connection'
                kubernetesServiceConnection: 'olympus'
