@@ -27,6 +27,6 @@ stages:
              inputs:
                connectionType: 'Kubernetes Service Connection'
                kubernetesServiceConnection: 'olympus'
+               command: 'install'               
                chartName: 'boutique'               
                namespace: $(serviceNamespace)
-               command: 'install'
