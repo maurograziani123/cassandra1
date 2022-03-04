@@ -4,16 +4,21 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+- none
+
+variables:
+
+  ### Variables ###
+  serviceNamespace: $(SERVICE_NAMESPACE)
+  serviceName: $(SERVICE_NAME)
 
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:  
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  #### Deploy All Images Stagee ####
+  - stage: Deploy_All_Images
+    jobs:
+      - job: Deploy_All_Images
+        steps:

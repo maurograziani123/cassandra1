@@ -19,7 +19,7 @@ pool:
 
 stages:
 
-  #### Build Image Stage ####
+  #### Deploy Image Stage ####
   - stage: Deploy_Image
     jobs:
       - job: Deploy_Image
