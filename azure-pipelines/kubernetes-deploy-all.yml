@@ -29,6 +29,7 @@ stages:
                connectionType: 'Kubernetes Service Connection'
                kubernetesServiceConnection: 'olympus'
                chartName: 'boutique'
+               releaseName: 'boutique'
                chartType: FilePath
                chartPath: helm
                command: 'upgrade'
