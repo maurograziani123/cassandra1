@@ -5,15 +5,12 @@
 
 trigger:
 - none
-<<<<<<< HEAD
 
 variables:
 
   ### Variables ###
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
-=======
->>>>>>> 6657f008fb627e3adcef07c91255a57070f9f1bb
 
 pool:
   vmImage: ubuntu-latest
