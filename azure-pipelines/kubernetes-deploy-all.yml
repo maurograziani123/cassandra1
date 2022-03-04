@@ -32,6 +32,7 @@ stages:
                chartType: FilePath
                chartPath: helm
                command: 'upgrade'
+               install: true
                force: true
                namespace: $(serviceNamespace)
                arguments: --set imageRepo=$(repoPrefix)
