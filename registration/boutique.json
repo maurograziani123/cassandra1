@@ -1,0 +1,115 @@
+{
+  "services": [
+    {
+      "$class": "Business Service",
+      "name": "Boutique",
+      "description": "Boutique for Beautiful Things"
+    },
+    {
+      "name": "frontend",
+      "description": "Frontend Service"
+    },
+    {
+      "name": "productcatalogservice",
+      "description": "Product Catalog Service"
+    },
+    {
+      "name": "cartservice",
+      "description": "Shopping Cart Service"
+    },
+    {
+      "name": "redis-cart",
+      "description": "Redis Shopping Cart Service Backend"
+    },
+    {
+      "name": "recommendationservice",
+      "description": "Recommendation Service"
+    },
+    {
+      "name": "adservice",
+      "description": "Ad Server Service"
+    },
+    {
+      "name": "checkoutservice",
+      "description": "Checkout Service"
+    },
+    {
+      "name": "currencyservice",
+      "description": "Currency Service"
+    },
+    {
+      "name": "emailservice",
+      "description": "E-Mail Service"
+    },
+    {
+      "name": "paymentservice",
+      "description": "E-Mail Service"
+    },
+    {
+      "name": "shippingservice",
+      "description": "Shipping Service"
+    }
+  ],
+  "relationships": [
+    {
+      "parent": "Boutique",
+      "child": "frontend"
+    },
+    {
+      "parent": "frontend",
+      "child": "cartservice"
+    },
+    {
+      "parent": "cartservice",
+      "child": "redis-cart"
+    },
+    {
+      "parent": "frontend",
+      "child": "recommendationservice"
+    },
+    {
+      "parent": "recommendationservice",
+      "child": "productcatalogservice"
+    },
+    {
+      "parent": "frontend",
+      "child": "productcatalogservice"
+    },
+    {
+      "parent": "frontend",
+      "child": "adservice"
+    },
+    {
+      "parent": "frontend",
+      "child": "checkoutservice"
+    },
+    {
+      "parent": "frontend",
+      "child": "currencyservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "emailservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "paymentservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "shippingservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "cartservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "productcatalogservice"
+    },
+    {
+      "parent": "checkoutservice",
+      "child": "currencyservice"
+    }
+  ]
+}
