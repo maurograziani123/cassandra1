@@ -20,10 +20,10 @@ pool:
 
 stages:
 
-  #### Prep Yaml Stage ####
-  - stage: Prep_Yaml
+  #### Deploy Image Stage ####
+  - stage: Deploy_Image
     jobs:
-      - job: Prep_Yaml
+      - job: Deploy_Image
         steps:
         - bash: |
             set -x # Echo Commands
@@ -33,13 +33,7 @@ stages:
             cd src/$(serviceName) 
             # Substitute
             envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
-          displayName: 'Prepping Yaml...'
-
-  #### Deploy Image Stage ####
-  - stage: Deploy_Image
-    jobs:
-      - job: Deploy_Image
-        steps:
+          displayName: 'Prepping Yaml...'        
         - task: Kubernetes@1
           displayName: 'Deploying $(serviceName) Image...'
           inputs:
