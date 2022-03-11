@@ -23,9 +23,12 @@ stages:
   #### Deploy Image Stage ####
   - stage: Deploy_Image
     jobs:
-
-      - job: XXX
-
+      - job: Register_Artifact
+        steps:
+          - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+            inputs:
+              connectedServiceName: 'servicenow'
+              artifactsPayload: 'artifact-1'
       - job: Deploy_Image
         steps:
         - bash: |
