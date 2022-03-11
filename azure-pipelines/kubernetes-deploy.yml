@@ -32,7 +32,7 @@ stages:
             # Change Dir
             cd src/$(serviceName) 
             # Substitute
-            envsubst < ../../kubernetes-manifests/${svcname}.yaml > ../../kubernetes-manifests/${svcname}.subst
+            envsubst < ../../kubernetes-manifests/${serviceName}.yaml > ../../kubernetes-manifests/${serviceName}.subst
           displayName: 'Prepping Yaml...'
 
   #### Deploy Image Stage ####
