@@ -11,6 +11,7 @@ trigger:
 variables:
 
   ### Variables ###
+  repoPrefix: $(REPO_PREFIX)
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
@@ -18,6 +19,21 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
+
+  #### Prep Yaml Stage ####
+  - stage: Prep_Yaml
+    jobs:
+      - job: Prep_Yaml
+        steps:
+        - bash: |
+            set -x # Echo Commands
+            # Prem Yaml
+            export REPO_PREFIX=$(repoPrefix)
+            # Change Dir
+            cd src/$(serviceName) 
+            # Substitute
+            envsubst < ../../kubernetes-manifests/${svcname}.yaml > ../../kubernetes-manifests/${svcname}.subst
+          displayName: 'Prepping Yaml...'
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
@@ -31,4 +47,4 @@ stages:
             kubernetesServiceEndpoint: 'olympus'
             namespace: $(serviceNamespace)
             command: 'apply'
-            arguments: '-f kubernetes-manifests/$(serviceName).yaml'
+            arguments: '-f kubernetes-manifests/$(serviceName).subst'
