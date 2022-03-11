@@ -28,7 +28,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: server
-        image: anthonyangelo/shippingservice:latest
+        image: $REPO_PREFIX/shippingservice:latest
         ports:
         - containerPort: 50051
         env:

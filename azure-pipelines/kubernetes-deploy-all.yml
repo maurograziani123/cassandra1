@@ -17,8 +17,6 @@ pool:
 
 stages:  
 
-  # helm install boutique -n cassandra helm/ --set imageRepo=anthonyangelo
-
   #### Deploy All Images Stagee ####
   - stage: Deploy_All_Images
     jobs:
