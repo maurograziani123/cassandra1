@@ -20,6 +20,32 @@ pool:
 
 stages:
 
+  #### Register Artifact ####
+  - stage: Deploy_Image
+    jobs:
+      - job: Deploy_Image
+        steps:
+         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+           inputs:
+             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+             artifactRegistrationPayload: |
+               {
+                  "artifacts": [
+                     {
+                        "name": "$(serviceName)",
+                        "version": "1.$(build.buildId)",
+                        "semanticVersion": "1.$(build.buildId).0",
+                        "repositoryName": "<artifact repository name>"
+                     }
+                  ],
+                  "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                  "taskExecutionNumber": "$(build.buildId)",
+                  "stageName": "$(system.jobDisplayName)",
+                "attemptNumber": "$(system.jobAttempt)",
+                  "branchName": "$(build.sourceBranchName)"
+               }
+             artifactToolIdExists: true
+
   #### Deploy Image Stage ####
   - stage: Deploy_Image
     jobs:
