@@ -44,7 +44,7 @@ stages:
                 "attemptNumber": "$(system.jobAttempt)",
                   "branchName": "$(build.sourceBranchName)"
                }
-             artifactToolIdExists: true
+             artifactToolIdExists: false
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
