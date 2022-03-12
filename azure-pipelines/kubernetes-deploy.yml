@@ -21,9 +21,9 @@ pool:
 stages:
 
   #### Register Artifact ####
-  - stage: Deploy_Image
+  - stage: Register_Artifact
     jobs:
-      - job: Deploy_Image
+      - job: Register_Artifact
         steps:
          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
            inputs:
