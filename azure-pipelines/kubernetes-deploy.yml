@@ -21,31 +21,31 @@ pool:
 stages:
 
   #### Register Artifact ####
-  - stage: Register_Artifact
-    jobs:
-      - job: Register_Artifact
-        steps:
-         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-           displayName: 'Registering Artifact $(serviceName)'
-           inputs:
-             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-             artifactRegistrationPayload: |
-               {
-                  "artifacts": [
-                     {
-                        "name": "$(serviceName)",
-                        "version": "1.$(build.buildId)",
-                        "semanticVersion": "1.$(build.buildId).0",
-                        "repositoryName": "cassandra"
-                     }
-                  ],
-                  "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-                  "taskExecutionNumber": "$(build.buildId)",
-                  "stageName": "$(system.jobDisplayName)",
-                  "attemptNumber": "$(system.jobAttempt)",
-                  "branchName": "$(build.sourceBranchName)"
-               }
-             artifactToolIdExists: false
+  # - stage: Register_Artifact
+  #   jobs:
+  #     - job: Register_Artifact
+  #       steps:
+  #        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+  #          displayName: 'Registering Artifact $(serviceName)'
+  #          inputs:
+  #            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+  #            artifactRegistrationPayload: |
+  #              {
+  #                 "artifacts": [
+  #                    {
+  #                       "name": "$(serviceName)",
+  #                       "version": "1.$(build.buildId)",
+  #                       "semanticVersion": "1.$(build.buildId).0",
+  #                       "repositoryName": "cassandra"
+  #                    }
+  #                 ],
+  #                 "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+  #                 "taskExecutionNumber": "$(build.buildId)",
+  #                 "stageName": "$(system.jobDisplayName)",
+  #                 "attemptNumber": "$(system.jobAttempt)",
+  #                 "branchName": "$(build.sourceBranchName)"
+  #              }
+  #            artifactToolIdExists: false
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
