@@ -36,7 +36,7 @@ stages:
                         "name": "$(serviceName)",
                         "version": "1.$(build.buildId)",
                         "semanticVersion": "1.$(build.buildId).0",
-                        "repositoryName": "<artifact repository name>"
+                        "repositoryName": "cassandra"
                      }
                   ],
                   "pipelineName": "$(system.teamProject)/$(build.definitionName)",
