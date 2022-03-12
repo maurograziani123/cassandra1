@@ -42,7 +42,7 @@ stages:
                   "pipelineName": "$(system.teamProject)/$(build.definitionName)",
                   "taskExecutionNumber": "$(build.buildId)",
                   "stageName": "$(system.jobDisplayName)",
-                "attemptNumber": "$(system.jobAttempt)",
+                  "attemptNumber": "$(system.jobAttempt)",
                   "branchName": "$(build.sourceBranchName)"
                }
              artifactToolIdExists: false
