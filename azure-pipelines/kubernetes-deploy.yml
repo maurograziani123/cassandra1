@@ -26,6 +26,7 @@ stages:
       - job: Register_Artifact
         steps:
          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+           displayName: 'Registering Artifact $(serviceName)'
            inputs:
              connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
              artifactRegistrationPayload: |
