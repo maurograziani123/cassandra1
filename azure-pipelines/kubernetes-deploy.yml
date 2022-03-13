@@ -15,8 +15,7 @@ variables:
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
-pool:
-  vmImage: ubuntu-latest
+pool: server
 
 stages:
 
