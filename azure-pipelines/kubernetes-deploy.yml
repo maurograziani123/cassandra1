@@ -20,49 +20,49 @@ pool: server
 stages:
 
   #### Register Artifact (2) ####
-  # - stage: Register_Artifact
-  #   jobs:
-  #     - job: Register_Artifact
-  #       steps:
-  #        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-  #          inputs:
-  #            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-  #            artifactToolIdExists: false
-  #            artifactRegistrationPayload: |
-  #              {
-  #               "artifacts": [
-  #                 {
-  #                   "name": "$(serviceName)",
-  #                   "version": "1.0.$(build.buildId)",
-  #                   "semanticVersion": "1.0.$(build.buildId)",
-  #                   "repositoryName": "cassandra"
-  #                 }],
-  #               "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-  #               "taskExecutionNumber": "$(build.buildId)",
-  #               "stageName": "$(system.jobDisplayName)",
-  #               "attemptNumber": "$(system.jobAttempt)",
-  #               "branchName": "$(build.sourceBranchName)"
-  #              }
+  - stage: Register_Artifact
+    jobs:
+      - job: Register_Artifact
+        steps:
+         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+           inputs:
+             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+             artifactToolIdExists: false
+             artifactRegistrationPayload: |
+               {
+                "artifacts": [
+                  {
+                    "name": "$(serviceName)",
+                    "version": "1.0.$(build.buildId)",
+                    "semanticVersion": "1.0.$(build.buildId)",
+                    "repositoryName": "cassandra"
+                  }],
+                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                "taskExecutionNumber": "$(build.buildId)",
+                "stageName": "$(system.jobDisplayName)",
+                "attemptNumber": "$(system.jobAttempt)",
+                "branchName": "$(build.sourceBranchName)"
+               }
 
   #### Deploy Image Stage ####
-  - stage: Deploy_Image
-    jobs:
-      - job: Deploy_Image
-        steps:
-        - bash: |
-            set -x # Echo Commands
-            # Prem Yaml
-            export REPO_PREFIX=$(repoPrefix)
-            # Change Dir
-            cd src/$(serviceName) 
-            # Substitute
-            envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
-          displayName: 'Prepping Yaml...'        
-        - task: Kubernetes@1
-          displayName: 'Deploying $(serviceName) Image...'
-          inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'olympus'
-            namespace: $(serviceNamespace)
-            command: 'apply'
-            arguments: '-f kubernetes-manifests/$(serviceName).subst'
+  # - stage: Deploy_Image
+  #   jobs:
+  #     - job: Deploy_Image
+  #       steps:
+  #       - bash: |
+  #           set -x # Echo Commands
+  #           # Prem Yaml
+  #           export REPO_PREFIX=$(repoPrefix)
+  #           # Change Dir
+  #           cd src/$(serviceName) 
+  #           # Substitute
+  #           envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
+  #         displayName: 'Prepping Yaml...'        
+  #       - task: Kubernetes@1
+  #         displayName: 'Deploying $(serviceName) Image...'
+  #         inputs:
+  #           connectionType: 'Kubernetes Service Connection'
+  #           kubernetesServiceEndpoint: 'olympus'
+  #           namespace: $(serviceNamespace)
+  #           command: 'apply'
+  #           arguments: '-f kubernetes-manifests/$(serviceName).subst'
