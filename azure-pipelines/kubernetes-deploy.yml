@@ -21,8 +21,7 @@ stages:
   - stage: Register_Artifact
     jobs:
       - job: Register_Artifact
-        pool:
-          vmImage: server
+        pool: pool
         steps:
          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
            inputs:
