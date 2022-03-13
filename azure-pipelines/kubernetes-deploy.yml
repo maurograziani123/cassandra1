@@ -22,7 +22,7 @@ stages:
     jobs:
       - job: Register_Artifact
         pool:
-          vmImage: ubuntu-latest
+          vmImage: server
         steps:
          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
            inputs:
