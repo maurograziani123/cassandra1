@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  pool: server
 
 steps:
 ### Task 1 ###
