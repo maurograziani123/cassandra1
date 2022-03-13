@@ -31,23 +31,23 @@ stages:
             artifactToolIdExists: false
             packageRegistrationPayload: |
               {
-                  "name": "$(serviceName)",
-                  "artifacts": [
-                    {
-                      "name": "frontend",
-                      "repositoryName": "cassandra",
-                      "version": "1.0.$(build.buildId)",
-                      "pipelineName":"$(system.teamProject)/$(build.definitionName)",
-                      "taskExecutionNumber":"$(build.buildId)",
-                      "stageName":"$(system.jobDisplayName)",
-                      "attemptNumber":"$(system.jobAttempt)",
-                      "branchName":"$(build.sourceBranchName)"
-                    }],
-                  "pipelineName":"$(system.teamProject)/$(build.definitionName)",
-                  "taskExecutionNumber":"$(build.buildId)",
-                  "stageName":"$(system.jobDisplayName)",
-                  "attemptNumber":"$(system.jobAttempt)",
-                  "branchName":"$(build.sourceBranchName)"
+                "name": "$(serviceName)",
+                "artifacts": [
+                  {
+                    "name": "frontend",
+                    "repositoryName": "cassandra",
+                    "version": "1.0.$(build.buildId)",
+                    "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                    "taskExecutionNumber":"$(build.buildId)",
+                    "stageName":"$(system.jobDisplayName)",
+                    "attemptNumber":"$(system.jobAttempt)",
+                    "branchName":"$(build.sourceBranchName)"
+                  }],
+                "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                "taskExecutionNumber":"$(build.buildId)",
+                "stageName":"$(system.jobDisplayName)",
+                "attemptNumber":"$(system.jobAttempt)",
+                "branchName":"$(build.sourceBranchName)"
               }
 
 
