@@ -34,6 +34,12 @@ steps:
 - task: InvokeRESTAPI@1
   inputs:
     connectionType: 'connectedServiceName'
-    serviceConnection: 'srecon21-cassandra-Generic Connection'
+    serviceConnection: 'devops'
     method: 'POST'
-    waitForCompletion: 'false'
+    waitForCompletion: 'true'
+    body: |
+      {
+        "buildNumber": "$(build.buildId)",
+        "isMultiBranch": "true",
+        "branchName": "$(build.sourceBranchName)"
+      }
