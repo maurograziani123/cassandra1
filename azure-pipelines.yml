@@ -6,40 +6,19 @@
 trigger:
 - main
 
-pool:
+jobs:
+- job: string
   pool: server
-
-steps:
-### Task 1 ###
-# - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-#   inputs:
-#     connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-#     artifactRegistrationPayload: |
-#       {
-#          "artifacts": [
-#             {
-#                "name": "frontend",
-#                "version": "1.0.$(build.buildId)",
-#                "semanticVersion": "1.0.$(build.buildId)",
-#                "repositoryName": "cassandra"
-#             }
-#          ],
-#          "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-#          "taskExecutionNumber": "$(build.buildId)",
-#          "stageName": "$(system.jobDisplayName)",
-#          "attemptNumber": "$(system.jobAttempt)",
-#          "branchName": "$(build.sourceBranchName)"
-#       }
-#     artifactToolIdExists: false
-- task: InvokeRESTAPI@1
-  inputs:
-    connectionType: 'connectedServiceName'
-    serviceConnection: 'devops'
-    method: 'POST'
-    waitForCompletion: 'true'
-    body: |
-      {
-        "buildNumber": "$(build.buildId)",
-        "isMultiBranch": "true",
-        "branchName": "$(build.sourceBranchName)"
-      }
+  steps:
+    - task: InvokeRESTAPI@1
+      inputs:
+        connectionType: 'connectedServiceName'
+        serviceConnection: 'devops'
+        method: 'POST'
+        waitForCompletion: 'true'
+        body: |
+          {
+            "buildNumber": "$(build.buildId)",
+            "isMultiBranch": "true",
+            "branchName": "$(build.sourceBranchName)"
+          }
