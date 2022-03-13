@@ -23,6 +23,7 @@ stages:
   - stage: Register_Artifact
     jobs:
       - job: Register_Artifact
+        pool: server
         steps:
          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
            inputs:
