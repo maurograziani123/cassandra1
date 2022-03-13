@@ -28,6 +28,7 @@ stages:
         - task: ServiceNow-DevOps-Server-Package-Registration@1
           inputs:
             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            artifactToolIdExists: false
             packageRegistrationPayload: |
               {
                   "name": "$(serviceName)",
