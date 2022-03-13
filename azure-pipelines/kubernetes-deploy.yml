@@ -32,7 +32,7 @@ stages:
                 {
                    "artifacts": [
                       {
-                         "name": "serviceName",
+                         "name": "$(serviceName)",
                          "version": "1.0.$(Build.BuildId)",
                          "semanticVersion": "1.0.$(Build.BuildId)",
                          "repositoryName": "cassandra"
