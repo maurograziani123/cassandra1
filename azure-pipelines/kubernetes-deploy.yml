@@ -15,40 +15,35 @@ variables:
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
+  pool:
+    vmImage: ubuntu-latest
+
 stages:
 
   #### Register Artifact (2) ####
   - stage: Register_Artifact
     jobs:
       - job: Register_Artifact
-        pool: pool
         steps:
-         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-           inputs:
-             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-             artifactToolIdExists: false
-             artifactRegistrationPayload: |
-               {
-                "artifacts": [
-                  {
-                    "name": "$(serviceName)",
-                    "version": "1.0.$(build.buildId)",
-                    "semanticVersion": "1.0.$(build.buildId)",
-                    "repositoryName": "cassandra"
-                  }],
-                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-                "taskExecutionNumber": "$(build.buildId)",
-                "stageName": "$(system.jobDisplayName)",
-                "attemptNumber": "$(system.jobAttempt)",
-                "branchName": "$(build.sourceBranchName)"
-               }
+          - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+            inputs:
+              connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+              artifactsPayload: |
+                {
+                   "artifacts": [
+                      {
+                         "name": "serviceName",
+                         "version": "1.0.$(Build.BuildId)",
+                         "semanticVersion": "1.0.$(Build.BuildId)",
+                         "repositoryName": "cassandra"
+                      }
+                   ]
+                }
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
     jobs:
       - job: Deploy_Image
-        pool:
-          vmImage: ubuntu-latest
         steps:
         - bash: |
             set -x # Echo Commands
