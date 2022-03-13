@@ -15,8 +15,6 @@ variables:
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
-pool: server
-
 stages:
 
   #### Register Artifact (2) ####
@@ -46,24 +44,26 @@ stages:
                }
 
   #### Deploy Image Stage ####
-  # - stage: Deploy_Image
-  #   jobs:
-  #     - job: Deploy_Image
-  #       steps:
-  #       - bash: |
-  #           set -x # Echo Commands
-  #           # Prem Yaml
-  #           export REPO_PREFIX=$(repoPrefix)
-  #           # Change Dir
-  #           cd src/$(serviceName) 
-  #           # Substitute
-  #           envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
-  #         displayName: 'Prepping Yaml...'        
-  #       - task: Kubernetes@1
-  #         displayName: 'Deploying $(serviceName) Image...'
-  #         inputs:
-  #           connectionType: 'Kubernetes Service Connection'
-  #           kubernetesServiceEndpoint: 'olympus'
-  #           namespace: $(serviceNamespace)
-  #           command: 'apply'
-  #           arguments: '-f kubernetes-manifests/$(serviceName).subst'
+  - stage: Deploy_Image
+    jobs:
+      - job: Deploy_Image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - bash: |
+            set -x # Echo Commands
+            # Prem Yaml
+            export REPO_PREFIX=$(repoPrefix)
+            # Change Dir
+            cd src/$(serviceName) 
+            # Substitute
+            envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
+          displayName: 'Prepping Yaml...'        
+        - task: Kubernetes@1
+          displayName: 'Deploying $(serviceName) Image...'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus'
+            namespace: $(serviceNamespace)
+            command: 'apply'
+            arguments: '-f kubernetes-manifests/$(serviceName).subst'
