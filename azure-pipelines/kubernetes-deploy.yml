@@ -34,7 +34,7 @@ stages:
                      {
                         "name": "$(serviceName)",
                         "version": "1.0.$(build.buildId)",
-                        "semanticVersion": "1.0.$(build.buildId)",
+                        # "semanticVersion": "1.0.$(build.buildId)",
                         "repositoryName": "cassandra"
                      },
                   ],
