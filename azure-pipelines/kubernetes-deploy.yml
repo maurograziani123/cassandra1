@@ -56,13 +56,13 @@ stages:
           connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
           changeRequestDetails: |
             {
-                "setCloseCode" : true,
-                "attributes": {
-                  "cmdb_ci": {
-                    "name": "$(serviceName)"
-                  }
+              "setCloseCode" : true,
+              "attributes": {
+                "cmdb_ci": {
+                  "name": "$(serviceName)"
                 }
               }
+            }
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
