@@ -41,9 +41,9 @@ stages:
                 }
 
   #### Deploy Image Stage ####
-  - stage: $(serviceName)
+  - stage: Deploy_Image
     jobs:
-      - job: Deploy_Image
+      - job: $(serviceName)
         steps:
         - bash: |
             set -x # Echo Commands
