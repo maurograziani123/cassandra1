@@ -23,20 +23,22 @@ stages:
       - job: Register_Artifact
         pool: server
         steps:
-          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-            inputs:
-              connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-              artifactsPayload: |
-                {
-                   "artifacts": [
-                      {
-                         "name": "$(serviceName)",
-                         "version": "1.0.$(Build.BuildId)",
-                         "semanticVersion": "1.0.$(Build.BuildId)",
-                         "repositoryName": "cassandra"
-                      }
-                   ]
-                }
+        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+          inputs:
+            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            artifactToolIdExists: false
+            artifactRegistrationPayload: |
+              {
+                "artifacts": [
+                    {
+                      "name":  "$(serviceName)",
+                      "version": "1.$(build.buildId)",
+                      "semanticVersion": "1.$(build.buildId).0",
+                      "repositoryName": "cassandra"
+                    },
+                ]
+              }
+            
 
   #### Register Change ####
   - stage: Register_Change
@@ -52,7 +54,7 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                    "name": "$(serviceName)
+                    "name": "$(serviceName)"
                   }
                 }
               }
