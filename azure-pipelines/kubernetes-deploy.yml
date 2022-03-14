@@ -36,7 +36,12 @@ stages:
                     "semanticVersion": "1.0.$(build.buildId)",
                     "repositoryName": "cassandra"
                   }
-                ]
+                ],
+                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                "taskExecutionNumber": "$(build.buildId)",
+                "stageName": "$(system.jobDisplayName)",
+                "attemptNumber": "$(system.jobAttempt)",
+                "branchName": "$(build.sourceBranchName)"                
               }
             
 
