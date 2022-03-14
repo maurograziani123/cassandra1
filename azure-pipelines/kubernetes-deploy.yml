@@ -30,12 +30,12 @@ stages:
             artifactRegistrationPayload: |
               {
                 "artifacts": [
-                    {
-                      "name":  "$(serviceName)",
-                      "version": "1.$(build.buildId)",
-                      "semanticVersion": "1.$(build.buildId).0",
-                      "repositoryName": "cassandra"
-                    },
+                  {
+                    "name":  "$(serviceName)",
+                    "version": "1.0.$(build.buildId)",
+                    "semanticVersion": "1.0.$(build.buildId)",
+                    "repositoryName": "cassandra"
+                  }
                 ]
               }
             
