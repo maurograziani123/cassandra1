@@ -21,28 +21,28 @@ pool:
 stages:
 
   #### Register Artifact ####
-  # - stage: Register_Artifact
-  #   jobs:
-  #     - job: Register_Artifact
-  #       steps:
-  #         - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
-  #           inputs:
-  #             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-  #             artifactsPayload: |
-  #               {
-  #                  "artifacts": [
-  #                     {
-  #                        "name": "$(serviceName)",
-  #                        "version": "1.0.$(Build.BuildId)",
-  #                        "semanticVersion": "1.0.$(Build.BuildId)",
-  #                        "repositoryName": "cassandra"
-  #                     }
-  #                  ]
-  #     }
-
   - stage: Register_Artifact
     jobs:
-    - job: Register_Artifact
+      - job: Register_Artifact
+        steps:
+          - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+            inputs:
+              connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+              artifactsPayload: |
+                {
+                   "artifacts": [
+                      {
+                         "name": "$(serviceName)",
+                         "version": "1.0.$(Build.BuildId)",
+                         "semanticVersion": "1.0.$(Build.BuildId)",
+                         "repositoryName": "cassandra"
+                      }
+                   ]
+      }
+
+  - stage: Register_Change
+    jobs:
+    - job: Register_Change
       pool: server
       steps:
       - task: ServiceNow-DevOps-Server-Change-Acceleration@1
@@ -53,10 +53,8 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                    "name": "test user"
-                  },
-                  "start_date": "2021-01-05 08:00:00",
-                  "end_date": "2021-01-08 08:00:00"
+                    "name": "$(serviceName)
+                  }
                 }
               }
 
