@@ -20,25 +20,45 @@ pool:
 
 stages:
 
-  #### Register Artifact (2) ####
+  #### Register Artifact ####
+  # - stage: Register_Artifact
+  #   jobs:
+  #     - job: Register_Artifact
+  #       steps:
+  #         - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+  #           inputs:
+  #             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+  #             artifactsPayload: |
+  #               {
+  #                  "artifacts": [
+  #                     {
+  #                        "name": "$(serviceName)",
+  #                        "version": "1.0.$(Build.BuildId)",
+  #                        "semanticVersion": "1.0.$(Build.BuildId)",
+  #                        "repositoryName": "cassandra"
+  #                     }
+  #                  ]
+  #     }
+
   - stage: Register_Artifact
     jobs:
-      - job: Register_Artifact
-        steps:
-          - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
-            inputs:
-              connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-              artifactsPayload: |
-                {
-                   "artifacts": [
-                      {
-                         "name": "$(serviceName)",
-                         "version": "1.0.$(Build.BuildId)",
-                         "semanticVersion": "1.0.$(Build.BuildId)",
-                         "repositoryName": "cassandra"
-                      }
-                   ]
+    - job: Register_Artifact
+      pool: server
+      steps:
+      - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+        inputs:
+          connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+          changeRequestDetails: |
+            {
+                "setCloseCode" : true,
+                "attributes": {
+                  "cmdb_ci": {
+                    "name": "test user"
+                  },
+                  "start_date": "2021-01-05 08:00:00",
+                  "end_date": "2021-01-08 08:00:00"
                 }
+              }
 
   #### Deploy Image Stage ####
   - stage: Deploy_Image
