@@ -15,17 +15,15 @@ variables:
   serviceNamespace: $(SERVICE_NAMESPACE)
   serviceName: $(SERVICE_NAME)
 
-pool:
-  vmImage: ubuntu-latest
-
 stages:
 
   #### Register Artifact ####
   - stage: Register_Artifact
     jobs:
       - job: Register_Artifact
+        pool: server
         steps:
-          - task: ServiceNow-DevOps-Agent-Artifact-Registration@1
+          - task: ServiceNow-DevOps-Server-Artifact-Registration@1
             inputs:
               connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
               artifactsPayload: |
@@ -38,8 +36,9 @@ stages:
                          "repositoryName": "cassandra"
                       }
                    ]
-      }
+                }
 
+  #### Register Change ####
   - stage: Register_Change
     jobs:
     - job: Register_Change
