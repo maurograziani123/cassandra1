@@ -67,7 +67,7 @@ spec:
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
           - name: ENV_PLATFORM
-            value: "onprep"
+            value: "AWS"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
           # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
           # - name: ENV_PLATFORM 
