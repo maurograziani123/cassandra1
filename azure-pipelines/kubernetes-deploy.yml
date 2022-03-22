@@ -20,6 +20,49 @@ pool:
 
 stages:
 
+  ##############################################################################
+  ###                       SERVICENOW CHANGE CONFIG                         ###
+  ###                       1) Register Artifact                             ###
+  ###                       2) Create Change Request                         ###
+  ##############################################################################
+  - stage: Change_Config
+    jobs:
+      - job: Change_Config
+        pool: server
+        steps:
+        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+          inputs:
+            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            artifactToolIdExists: false
+            artifactRegistrationPayload: |
+              {
+                "artifacts": [
+                  {
+                    "name":  "$(serviceName)",
+                    "version": "1.0.$(build.buildId)",
+                    "semanticVersion": "1.0.$(build.buildId)",
+                    "repositoryName": "cassandra"
+                  }
+                ],
+                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                "taskExecutionNumber": "$(build.buildId)",
+                "stageName": "$(system.jobDisplayName)",
+                "attemptNumber": "$(system.jobAttempt)",
+                "branchName": "$(build.sourceBranchName)"                
+              }
+        - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+          inputs:
+            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            changeRequestDetails: |
+              {
+                "setCloseCode" : true,
+                "attributes": {
+                  "cmdb_ci": {
+                    "name": "$(serviceName)"
+                  }
+                }
+              }              
+
   #### Build Image Stage ####
   - stage: Build_Image
     jobs:
@@ -43,52 +86,6 @@ stages:
             # Build Image   
             docker build -t $IMAGE . && docker push $IMAGE   
           displayName: 'Building Image...'
-  
-  #### Register Artifact ####
-  - stage: Register_Artifact
-    jobs:
-      - job: Register_Artifact
-        pool: server
-        steps:
-        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-          inputs:
-            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-            artifactToolIdExists: false
-            artifactRegistrationPayload: |
-              {
-                "artifacts": [
-                  {
-                    "name":  "$(serviceName)",
-                    "version": "1.0.$(build.buildId)",
-                    "semanticVersion": "1.0.$(build.buildId)",
-                    "repositoryName": "cassandra"
-                  }
-                ],
-                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-                "taskExecutionNumber": "$(build.buildId)",
-                "stageName": "$(system.jobDisplayName)",
-                "attemptNumber": "$(system.jobAttempt)",
-                "branchName": "$(build.sourceBranchName)"                
-              }
-
-  #### Register Change ####
-  - stage: Register_Change
-    jobs:
-    - job: Register_Change
-      pool: server
-      steps:
-      - task: ServiceNow-DevOps-Server-Change-Acceleration@1
-        inputs:
-          connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-          changeRequestDetails: |
-            {
-              "setCloseCode" : true,
-              "attributes": {
-                "cmdb_ci": {
-                  "name": "$(serviceName)"
-                }
-              }
-            }
            
   #### Deploy Image Stage ####
   - stage: Deploy_Image
