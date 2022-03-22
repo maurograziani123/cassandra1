@@ -20,49 +20,95 @@ pool:
 
 stages:
 
-  #### Build Image Stage ####
-  - stage: Build_Image
+  #### Register Artifact ####
+  - stage: Register_Artifact
     jobs:
-      - job: Build_Image
+      - job: Register_Artifact
+        pool: server
         steps:
-        - bash: |
-            set -x # Echo Commands
-            # Docker Login
-            echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin        
-            # Build Image
-            export REPO_PREFIX=$(repoPrefix)
-            export TAG=latest
-            export IMAGE=$(repoPrefix)/$(serviceName):$TAG
-            # Change Dir
-            if [ $(serviceName) == "cartservice" ] 
-            then
-              cd src/$(serviceName)/src
-            else
-              cd src/$(serviceName)
-            fi
-            # Build Image   
-            docker build -t $IMAGE . && docker push $IMAGE   
-          displayName: 'Building Image...'
-
-  #### Deploy Image Stage ####
-  - stage: Deploy_Image
-    jobs:
-      - job: Deploy_Image
-        steps:
-        - bash: |
-            set -x # Echo Commands
-            # Prem Yaml
-            export REPO_PREFIX=$(repoPrefix)
-            # Change Dir
-            cd src/$(serviceName) 
-            # Substitute
-            envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
-          displayName: 'Prepping Yaml...'        
-        - task: Kubernetes@1
-          displayName: 'Deploying $(serviceName) Image...'
+        - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
-            connectionType: 'Kubernetes Service Connection'
-            kubernetesServiceEndpoint: 'olympus'
-            namespace: $(serviceNamespace)
-            command: 'apply'
-            arguments: '-f kubernetes-manifests/$(serviceName).subst'          
+            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            artifactToolIdExists: false
+            artifactRegistrationPayload: |
+              {
+                "artifacts": [
+                  {
+                    "name":  "$(serviceName)",
+                    "version": "1.0.$(build.buildId)",
+                    "semanticVersion": "1.0.$(build.buildId)",
+                    "repositoryName": "cassandra"
+                  }
+                ],
+                "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                "taskExecutionNumber": "$(build.buildId)",
+                "stageName": "$(system.jobDisplayName)",
+                "attemptNumber": "$(system.jobAttempt)",
+                "branchName": "$(build.sourceBranchName)"                
+              }
+
+  #### Register Change ####
+  - stage: Register_Change
+    jobs:
+    - job: Register_Change
+      pool: server
+      steps:
+      - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+        inputs:
+          connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+          changeRequestDetails: |
+            {
+              "setCloseCode" : true,
+              "attributes": {
+                "cmdb_ci": {
+                  "name": "$(serviceName)"
+                }
+              }
+            }
+
+  # #### Build Image Stage ####
+  # - stage: Build_Image
+  #   jobs:
+  #     - job: Build_Image
+  #       steps:
+  #       - bash: |
+  #           set -x # Echo Commands
+  #           # Docker Login
+  #           echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin        
+  #           # Build Image
+  #           export REPO_PREFIX=$(repoPrefix)
+  #           export TAG=latest
+  #           export IMAGE=$(repoPrefix)/$(serviceName):$TAG
+  #           # Change Dir
+  #           if [ $(serviceName) == "cartservice" ] 
+  #           then
+  #             cd src/$(serviceName)/src
+  #           else
+  #             cd src/$(serviceName)
+  #           fi
+  #           # Build Image   
+  #           docker build -t $IMAGE . && docker push $IMAGE   
+  #         displayName: 'Building Image...'
+
+  # #### Deploy Image Stage ####
+  # - stage: Deploy_Image
+  #   jobs:
+  #     - job: Deploy_Image
+  #       steps:
+  #       - bash: |
+  #           set -x # Echo Commands
+  #           # Prem Yaml
+  #           export REPO_PREFIX=$(repoPrefix)
+  #           # Change Dir
+  #           cd src/$(serviceName) 
+  #           # Substitute
+  #           envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
+  #         displayName: 'Prepping Yaml...'        
+  #       - task: Kubernetes@1
+  #         displayName: 'Deploying $(serviceName) Image...'
+  #         inputs:
+  #           connectionType: 'Kubernetes Service Connection'
+  #           kubernetesServiceEndpoint: 'olympus'
+  #           namespace: $(serviceNamespace)
+  #           command: 'apply'
+  #           arguments: '-f kubernetes-manifests/$(serviceName).subst'          
