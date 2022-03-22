@@ -37,3 +37,26 @@ stages:
             # Build Image   
             docker build -t $IMAGE . && docker push $IMAGE   
           displayName: 'Building Image...'
+
+  #### Deploy Image Stage ####
+  - stage: Deploy_Image
+    jobs:
+      - job: Deploy_Image
+        steps:
+        - bash: |
+            set -x # Echo Commands
+            # Prem Yaml
+            export REPO_PREFIX=$(repoPrefix)
+            # Change Dir
+            cd src/$(serviceName) 
+            # Substitute
+            envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
+          displayName: 'Prepping Yaml...'        
+        - task: Kubernetes@1
+          displayName: 'Deploying $(serviceName) Image...'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus'
+            namespace: $(serviceNamespace)
+            command: 'apply'
+            arguments: '-f kubernetes-manifests/$(serviceName).subst'          
