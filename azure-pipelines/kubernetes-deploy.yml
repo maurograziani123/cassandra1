@@ -13,6 +13,7 @@ variables:
   repoPAT: '$(REPO_PAT)'
   repoPrefix: '$(REPO_PREFIX)'
   serviceName: $(SERVICE_NAME)
+  serviceNamespace: $(SERVICE_NAMESPACE)  
 
 pool:
   vmImage: ubuntu-latest
