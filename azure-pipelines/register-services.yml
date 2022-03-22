@@ -5,7 +5,6 @@
 
 trigger:
 - none
-# - master
 
 variables:
 
