@@ -21,11 +21,11 @@ pool:
 stages:
 
   ##############################################################################
-  ###                       SERVICENOW CHANGE CONFIG                         ###
+  ###                       SERVICENOW DEVOPS CHANGE                         ###
   ##############################################################################
-  - stage: Change_Config
+  - stage: DevOps_Change
     jobs:
-      - job: Change_Config
+      - job: DevOps_Change
         pool: server
         steps:
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
@@ -62,7 +62,7 @@ stages:
               }              
 
   ##############################################################################
-  ###              BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                 ###
+  ###               BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                ###
   ##############################################################################
   - stage: Build_Image
     jobs:
