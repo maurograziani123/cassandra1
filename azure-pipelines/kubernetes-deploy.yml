@@ -34,7 +34,12 @@ stages:
             export TAG=latest
             export IMAGE=$(repoPrefix)/$(serviceName):$TAG
             # Change Dir
-            cd src/$(serviceName) 
+            if [ $(serviceName) == "cartservice" ] 
+            then
+              cd src/$(serviceName)/src
+            else
+              cd src/$(serviceName)
+            fi
             # Build Image   
             docker build -t $IMAGE . && docker push $IMAGE   
           displayName: 'Building Image...'
