@@ -29,13 +29,15 @@ stages:
             cd tests/frontend
             # Run Tests
             pytest --verbose --nunitxml=TEST-results.xml
-      - job: Publish_Tests
-        steps:
+          displayName: 'Running Tests...'  
         - task: PublishTestResults@2
           inputs:
             testResultsFormat: 'NUnit'
             testResultsFiles: '**/TEST-*.xml'
             searchFolder: '$(System.DefaultWorkingDirectory)/tests/frontend'
             testRunTitle: 'Publish Tests'
+          displayName: 'Publishing Results...'
+
+
 
 
