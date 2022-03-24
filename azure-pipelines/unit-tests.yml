@@ -27,4 +27,6 @@ stages:
             pip install -U pytest pytest-html pytest-xdist pytest-nunit
             # Change Dir
             cd tests/frontend
+            # Run Tests
+            pytest --verbose --nunitxml=test-results.xml
           displayName: 'Running Tests...'
