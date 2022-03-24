@@ -9,7 +9,7 @@ trigger:
 variables:
 
   ### Variables ###
-  # TBD
+  VAR1: '$(VAR1)'
 
 pool:
   vmImage: ubuntu-latest
