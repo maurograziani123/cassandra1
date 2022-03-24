@@ -31,4 +31,4 @@ stages:
             cd hack/            
             # Build All Images
             REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-images.sh
-          displayName: 'Building All Images...'
+          displayName: 'Building All Images'

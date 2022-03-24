@@ -21,6 +21,30 @@ pool:
 stages:
 
   ##############################################################################
+  ###                                 RUN TESTS                              ###
+  ##############################################################################
+  - stage: Run_Tests
+    jobs:
+      - job: Run_Tests
+        steps:
+        - bash: |
+            set -x # Echo Commands
+            # Install Tools
+            pip install -U pytest pytest-html pytest-xdist pytest-nunit
+            # Change Dir
+            cd tests/$(serviceName)
+            # Run Tests
+            pytest --verbose --nunitxml=TEST-results.xml
+          displayName: 'Running Tests'  
+        - task: PublishTestResults@2
+          inputs:
+            testResultsFormat: 'NUnit'
+            testResultsFiles: '**/TEST-*.xml'
+            searchFolder: '$(System.DefaultWorkingDirectory)/tests/$(serviceName)'
+            testRunTitle: '$(serviceName)-1.0.$(build.buildId)-tests'
+          displayName: 'Publishing Results'
+
+  ##############################################################################
   ###                       SERVICENOW DEVOPS CHANGE                         ###
   ##############################################################################
   - stage: DevOps_Change
@@ -85,7 +109,7 @@ stages:
             fi
             # Build Image   
             docker build -t $IMAGE . && docker push $IMAGE   
-          displayName: 'Building Image...'
+          displayName: 'Building Image'
            
   ##############################################################################
   ###                      DEPLOY IMAGE TO KUBERNETES                        ###
@@ -102,9 +126,9 @@ stages:
             cd src/$(serviceName) 
             # Substitute
             envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
-          displayName: 'Prepping Yaml...'        
+          displayName: 'Prepping Yaml'        
         - task: Kubernetes@1
-          displayName: 'Deploying $(serviceName) Image...'
+          displayName: 'Deploying $(serviceName) Image..'
           inputs:
             connectionType: 'Kubernetes Service Connection'
             kubernetesServiceEndpoint: 'olympus'
