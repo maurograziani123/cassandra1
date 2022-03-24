@@ -9,7 +9,7 @@ trigger:
 variables:
 
   ### Variables ###
-  VAR1: '$(VAR1)'
+  # VAR1: '$(VAR1)'
 
 pool:
   vmImage: ubuntu-latest
@@ -28,5 +28,14 @@ stages:
             # Change Dir
             cd tests/frontend
             # Run Tests
-            pytest --verbose --nunitxml=test-results.xml
-          displayName: 'Running Tests...'
+            pytest --verbose --nunitxml=TEST-results.xml
+      - job: Publish_Tests
+        steps:
+        - task: PublishTestResults@2
+          inputs:
+            testResultsFormat: 'NUnit'
+            testResultsFiles: '**/TEST-*.xml'
+            searchFolder: '$(System.DefaultWorkingDirectory)/tests/frontend'
+            testRunTitle: 'Publish Tests'
+
+
