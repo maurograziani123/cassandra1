@@ -6,10 +6,10 @@
 trigger:
 - none
 
-variables:
-
-  ### Variables ###
-  # VAR1: '$(VAR1)'
+# variables:
+  # key1: value1
+  # key2: value2
+  # key3: value3
 
 pool:
   vmImage: ubuntu-latest
