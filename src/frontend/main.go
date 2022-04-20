@@ -22,16 +22,18 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
-	"contrib.go.opencensus.io/exporter/jaeger"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/plugin/ochttp/propagation/b3"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -160,35 +162,68 @@ func main() {
 	var handler http.Handler = r
 	handler = &logHandler{log: log, next: handler} // add logging
 	handler = ensureSessionID(handler)             // add session ID
-	handler = &ochttp.Handler{                     // add opencensus instrumentation
-		Handler:     handler,
-		Propagation: &b3.HTTPFormat{}}
+	// handler = &ochttp.Handler{                     // add opencensus instrumentation
+	// 	Handler:     handler,
+	// 	Propagation: &b3.HTTPFormat{}}
 
 	log.Infof("starting server on " + addr + ":" + srvPort)
 	log.Fatal(http.ListenAndServe(addr+":"+srvPort, handler))
 }
 
-func initJaegerTracing(log logrus.FieldLogger) {
+// func initJaegerTracing(log logrus.FieldLogger) {
 
-	svcAddr := os.Getenv("JAEGER_SERVICE_ADDR")
-	if svcAddr == "" {
-		log.Info("jaeger initialization disabled.")
-		return
-	}
+// 	svcAddr := os.Getenv("JAEGER_SERVICE_ADDR")
+// 	if svcAddr == "" {
+// 		log.Info("jaeger initialization disabled.")
+// 		return
+// 	}
 
-	// Register the Jaeger exporter to be able to retrieve
-	// the collected spans.
-	exporter, err := jaeger.NewExporter(jaeger.Options{
-		Endpoint: fmt.Sprintf("http://%s", svcAddr),
-		Process: jaeger.Process{
-			ServiceName: "frontend",
-		},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	trace.RegisterExporter(exporter)
-	log.Info("jaeger initialization completed.")
+// 	// Register the Jaeger exporter to be able to retrieve
+// 	// the collected spans.
+// 	exporter, err := jaeger.NewExporter(jaeger.Options{
+// 		Endpoint: fmt.Sprintf("http://%s", svcAddr),
+// 		Process: jaeger.Process{
+// 			ServiceName: "frontend",
+// 		},
+// 	})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	trace.RegisterExporter(exporter)
+// 	log.Info("jaeger initialization completed.")
+// }
+
+
+func initLSTracer(log logrus.FieldLogger) {
+	var tracer = otel.Tracer("frontEnd")
+
+	ls_access_token :=os.LookupEnv("LS_ACCESS_TOKEN")
+
+	//OTLP trace exporter
+	exporter, err := otlptrace.New(context.Context, otelgrpc.NewClient(
+		otelgrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+		otelgrpc.WithEndpoint("ingest.lightstep.com:443"),
+		otelgrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+		otelgrpc.WithCompressor(gzip.Name),),
+	)
+	resource := resource.NewWithAttributes(
+	semconv.SchemaURL,
+	semconv.ServiceNameKey.String("frontEnd"),
+	semconv.ServiceVersionKey.String("1.0.0"),
+	)
+
+	// Define TracerProvider
+	tracerProvider := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(newResource()),
+	)
+
+	// Set TracerProvider
+	otel.SetTracerProvider(tracerProvider)
+
+	//Set Propagation headers
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 }
 
 func initStats(log logrus.FieldLogger, exporter *stackdriver.Exporter) {
