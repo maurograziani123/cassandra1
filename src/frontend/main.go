@@ -123,7 +123,7 @@ func main() {
 		//Define system resource
 		resource := resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("frontEnd"),
+			semconv.ServiceNameKey.String("Front End"),
 		)
 		//OTLP trace exporter
 		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
