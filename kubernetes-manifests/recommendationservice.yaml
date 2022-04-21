@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: $REPO_PREFIX/recommendationservice:latest
+        image: recommendationservice
         ports:
         - containerPort: 8080
         readinessProbe:

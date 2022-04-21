@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: $REPO_PREFIX/emailservice:latest
+        image: emailservice
         ports:
         - containerPort: 8080
         env:

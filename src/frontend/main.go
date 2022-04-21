@@ -22,19 +22,26 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
-	"contrib.go.opencensus.io/exporter/stackdriver"
+	// "contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+
+	"go.opencensus.io/plugin/ocgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	// "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
+	// "go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	// "go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
-	"go.opentelemetry.io/otel/trace"
+	// "go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/encoding/gzip"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -111,7 +118,33 @@ func main() {
 
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
-		go initTracing(log)
+		ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
+
+		//Define system resource
+		resource := resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("frontEnd"),
+		)
+		//OTLP trace exporter
+		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
+			otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+			otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+			otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+			otlptracegrpc.WithCompressor(gzip.Name),),
+		)
+		if err != nil {
+			log.Fatalf("Could not start web server: %s", err)
+		}
+
+		// Define TracerProvider
+		tracerProvider := sdktrace.NewTracerProvider(
+			sdktrace.WithSampler(sdktrace.AlwaysSample()),
+			sdktrace.WithResource(resource),
+			sdktrace.WithBatcher(exporter),
+		)
+
+		// Set TracerProvider
+		otel.SetTracerProvider(tracerProvider)
 	} else {
 		log.Info("Tracing disabled.")
 	}
@@ -146,6 +179,7 @@ func main() {
 	mustConnGRPC(ctx, &svc.adSvcConn, svc.adSvcAddr)
 
 	r := mux.NewRouter()
+	r.Use(otelmux.Middleware("frontEnd"))
 	r.Path("/").Handler(promhttp.InstrumentHandlerCounter(requestCount, http.HandlerFunc(svc.homeHandler))).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/product/{id}", svc.productHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/cart", svc.viewCartHandler).Methods(http.MethodGet, http.MethodHead)
@@ -194,90 +228,91 @@ func main() {
 // }
 
 
-func initLSTracer(log logrus.FieldLogger) {
-	var tracer = otel.Tracer("frontEnd")
+// func initLSTracer(log logrus.FieldLogger) {
+// 	var tracer = otel.Tracer("frontEnd")
 
-	ls_access_token :=os.LookupEnv("LS_ACCESS_TOKEN")
+// 	ls_access_token, _ :=os.LookupEnv("LS_ACCESS_TOKEN")
 
-	//OTLP trace exporter
-	exporter, err := otlptrace.New(context.Context, otelgrpc.NewClient(
-		otelgrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
-		otelgrpc.WithEndpoint("ingest.lightstep.com:443"),
-		otelgrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
-		otelgrpc.WithCompressor(gzip.Name),),
-	)
-	resource := resource.NewWithAttributes(
-	semconv.SchemaURL,
-	semconv.ServiceNameKey.String("frontEnd"),
-	semconv.ServiceVersionKey.String("1.0.0"),
-	)
+// 	//OTLP trace exporter
+// 	exporter, err := otlptracegrpc.New(context.Context, otlptracegrpc.NewClient(
+// 		otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+// 		otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+// 		otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+// 		otlptracegrpc.WithCompressor(gzip.Name),),
+// 	)
+// 	resource := resource.NewWithAttributes(
+// 	semconv.SchemaURL,
+// 	semconv.ServiceNameKey.String("frontEnd"),
+// 	semconv.ServiceVersionKey.String("1.0.0"),
+// 	)
 
-	// Define TracerProvider
-	tracerProvider := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithBatcher(exporter),
-		sdktrace.WithResource(newResource()),
-	)
+// 	// Define TracerProvider
+// 	tracerProvider := sdktrace.NewTracerProvider(
+// 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
+// 		sdktrace.WithBatcher(exporter),
+// 		sdktrace.WithResource(newResource()),
+// 	)
 
-	// Set TracerProvider
-	otel.SetTracerProvider(tracerProvider)
+// 	// Set TracerProvider
+// 	otel.SetTracerProvider(tracerProvider)
 
-	//Set Propagation headers
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
-}
+// 	//Set Propagation headers
+// 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
-func initStats(log logrus.FieldLogger, exporter *stackdriver.Exporter) {
-	view.SetReportingPeriod(60 * time.Second)
-	view.RegisterExporter(exporter)
-	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
-		log.Warn("Error registering http default server views")
-	} else {
-		log.Info("Registered http default server views")
-	}
-	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
-		log.Warn("Error registering grpc default client views")
-	} else {
-		log.Info("Registered grpc default client views")
-	}
-}
+// }
 
-func initStackdriverTracing(log logrus.FieldLogger) {
-	// TODO(ahmetb) this method is duplicated in other microservices using Go
-	// since they are not sharing packages.
-	for i := 1; i <= 3; i++ {
-		log = log.WithField("retry", i)
-		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
-		if err != nil {
-			// log.Warnf is used since there are multiple backends (stackdriver & jaeger)
-			// to store the traces. In production setup most likely you would use only one backend.
-			// In that case you should use log.Fatalf.
-			log.Warnf("failed to initialize Stackdriver exporter: %+v", err)
-		} else {
-			trace.RegisterExporter(exporter)
-			log.Info("registered Stackdriver tracing")
+// func initStats(log logrus.FieldLogger, exporter *stackdriver.Exporter) {
+// 	view.SetReportingPeriod(60 * time.Second)
+// 	view.RegisterExporter(exporter)
+// 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+// 		log.Warn("Error registering http default server views")
+// 	} else {
+// 		log.Info("Registered http default server views")
+// 	}
+// 	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
+// 		log.Warn("Error registering grpc default client views")
+// 	} else {
+// 		log.Info("Registered grpc default client views")
+// 	}
+// }
 
-			// Register the views to collect server stats.
-			initStats(log, exporter)
-			return
-		}
-		d := time.Second * 20 * time.Duration(i)
-		log.Debugf("sleeping %v to retry initializing Stackdriver exporter", d)
-		time.Sleep(d)
-	}
-	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
-}
+// func initStackdriverTracing(log logrus.FieldLogger) {
+// 	// TODO(ahmetb) this method is duplicated in other microservices using Go
+// 	// since they are not sharing packages.
+// 	for i := 1; i <= 3; i++ {
+// 		log = log.WithField("retry", i)
+// 		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+// 		if err != nil {
+// 			// log.Warnf is used since there are multiple backends (stackdriver & jaeger)
+// 			// to store the traces. In production setup most likely you would use only one backend.
+// 			// In that case you should use log.Fatalf.
+// 			log.Warnf("failed to initialize Stackdriver exporter: %+v", err)
+// 		} else {
+// 			trace.RegisterExporter(exporter)
+// 			log.Info("registered Stackdriver tracing")
 
-func initTracing(log logrus.FieldLogger) {
-	// This is a demo app with low QPS. trace.AlwaysSample() is used here
-	// to make sure traces are available for observation and analysis.
-	// In a production environment or high QPS setup please use
-	// trace.ProbabilitySampler set at the desired probability.
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+// 			// Register the views to collect server stats.
+// 			initStats(log, exporter)
+// 			return
+// 		}
+// 		d := time.Second * 20 * time.Duration(i)
+// 		log.Debugf("sleeping %v to retry initializing Stackdriver exporter", d)
+// 		time.Sleep(d)
+// 	}
+// 	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
+// }
 
-	initJaegerTracing(log)
-	initStackdriverTracing(log)
+// func initTracing(log logrus.FieldLogger) {
+// 	// This is a demo app with low QPS. trace.AlwaysSample() is used here
+// 	// to make sure traces are available for observation and analysis.
+// 	// In a production environment or high QPS setup please use
+// 	// trace.ProbabilitySampler set at the desired probability.
+// 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
-}
+// 	initJaegerTracing(log)
+// 	initStackdriverTracing(log)
+
+// }
 
 func initProfiling(log logrus.FieldLogger, service, version string) {
 	// TODO(ahmetb) this method is duplicated in other microservices using Go
