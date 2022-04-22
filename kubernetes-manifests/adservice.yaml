@@ -47,6 +47,15 @@ spec:
             secretKeyRef:
               name: lightstep-credentials
               key: accessToken
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://ingest.lightstep.com:443"
+        - name: OTEL_SERVICE_NAME
+          value: "adservice"
+        # - name: OTEL_EXPORTER_OTLP_HEADERS
+          # value: "lightstep-access-token:" + $LS_ACCESS_TOKEN
+        
         # - name: JAEGER_SERVICE_ADDR
         #   value: "jaeger-collector:14268"
         resources:

@@ -31,10 +31,11 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	// "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
+	// "go.opentelemetry.io/contrib/propagators/b3"
 	// "go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	// "go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
@@ -118,33 +119,34 @@ func main() {
 
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
-		ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
+		initTracing(ctx, log)
+		// ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
 
-		//Define system resource
-		resource := resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("Front End"),
-		)
-		//OTLP trace exporter
-		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
-			otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
-			otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
-			otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
-			otlptracegrpc.WithCompressor(gzip.Name),),
-		)
-		if err != nil {
-			log.Fatalf("Could not start web server: %s", err)
-		}
+		// //Define system resource
+		// resource := resource.NewWithAttributes(
+		// 	semconv.SchemaURL,
+		// 	semconv.ServiceNameKey.String("frontend"),
+		// )
+		// //OTLP trace exporter
+		// exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
+		// 	otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+		// 	otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+		// 	otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+		// 	otlptracegrpc.WithCompressor(gzip.Name),),
+		// )
+		// if err != nil {
+		// 	log.Fatalf("Could not start web server: %s", err)
+		// }
 
-		// Define TracerProvider
-		tracerProvider := sdktrace.NewTracerProvider(
-			sdktrace.WithSampler(sdktrace.AlwaysSample()),
-			sdktrace.WithResource(resource),
-			sdktrace.WithBatcher(exporter),
-		)
+		// // Define TracerProvider
+		// tracerProvider := sdktrace.NewTracerProvider(
+		// 	sdktrace.WithSampler(sdktrace.AlwaysSample()),
+		// 	sdktrace.WithResource(resource),
+		// 	sdktrace.WithBatcher(exporter),
+		// )
 
-		// Set TracerProvider
-		otel.SetTracerProvider(tracerProvider)
+		// // Set TracerProvider
+		// otel.SetTracerProvider(tracerProvider)
 	} else {
 		log.Info("Tracing disabled.")
 	}
@@ -302,17 +304,63 @@ func main() {
 // 	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
 // }
 
-// func initTracing(log logrus.FieldLogger) {
-// 	// This is a demo app with low QPS. trace.AlwaysSample() is used here
-// 	// to make sure traces are available for observation and analysis.
-// 	// In a production environment or high QPS setup please use
-// 	// trace.ProbabilitySampler set at the desired probability.
-// 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+func initLightstepTracing(ctx context.Context, log logrus.FieldLogger) {
+	ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
 
-// 	initJaegerTracing(log)
-// 	initStackdriverTracing(log)
+		//Define system resource
+		resource := resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("frontend"),
+		)
+		//OTLP trace exporter
+		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
+			otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+			otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+			otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+			otlptracegrpc.WithCompressor(gzip.Name),),
+		)
+		if err != nil {
+			log.Fatalf("Could not start web server: %s", err)
+		}
 
-// }
+		// Define TracerProvider
+		tracerProvider := sdktrace.NewTracerProvider(
+			sdktrace.WithSampler(sdktrace.AlwaysSample()),
+			sdktrace.WithResource(resource),
+			sdktrace.WithBatcher(exporter),
+		)
+
+		// Set TracerProvider
+		otel.SetTracerProvider(tracerProvider)
+
+		// //Set b3 headers
+		// props := []propagation.TextMapPropagator{
+		// b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader)),
+		// propagation.Baggage{},
+		// propagation.TraceContext{},
+		// }
+
+		// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		// 	props...,
+		// ))
+
+		//Set context propagation type
+		otel.SetTextMapPropagator(propagation.TraceContext{})
+
+}
+
+func initTracing(ctx context.Context, log logrus.FieldLogger) {
+	// This is a demo app with low QPS. trace.AlwaysSample() is used here
+	// to make sure traces are available for observation and analysis.
+	// In a production environment or high QPS setup please use
+	// trace.ProbabilitySampler set at the desired probability.
+	// sdktrace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+	initLightstepTracing(ctx, log)
+	// initJaegerTracing(log)
+	// initStackdriverTracing(log)
+
+}
 
 func initProfiling(log logrus.FieldLogger, service, version string) {
 	// TODO(ahmetb) this method is duplicated in other microservices using Go

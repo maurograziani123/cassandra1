@@ -32,16 +32,28 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"cloud.google.com/go/profiler"
-	"contrib.go.opencensus.io/exporter/jaeger"
-	"contrib.go.opencensus.io/exporter/stackdriver"
+	// "contrib.go.opencensus.io/exporter/jaeger"
+	// "contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
+	// "go.opentelemetry.io/contrib/propagators/b3"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	grpcotel "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
+	"go.opentelemetry.io/otel/trace"
 	//  "go.opencensus.io/exporter/jaeger"
 	"go.opencensus.io/plugin/ocgrpc"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
+	// "go.opencensus.io/stats/view"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/status"
 )
 
@@ -75,9 +87,11 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
+
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
-		go initTracing()
+		initTracing(ctx, log)
 	} else {
 		log.Info("Tracing disabled.")
 	}
@@ -133,7 +147,12 @@ func run(port string) string {
 		log.Fatal(err)
 	}
 	var srv *grpc.Server
-	if os.Getenv("DISABLE_STATS") == "" {
+	if os.Getenv("DISABLE_TRACING") == "" {
+		srv = grpc.NewServer(
+		grpc.UnaryInterceptor(grpcotel.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(grpcotel.StreamServerInterceptor()),
+		)
+	} else if os.Getenv("DISABLE_STATS") == "" {
 		log.Info("Stats enabled.")
 		srv = grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 	} else {
@@ -149,63 +168,116 @@ func run(port string) string {
 	return l.Addr().String()
 }
 
-func initJaegerTracing() {
-	svcAddr := os.Getenv("JAEGER_SERVICE_ADDR")
-	if svcAddr == "" {
-		log.Info("jaeger initialization disabled.")
-		return
-	}
-	// Register the Jaeger exporter to be able to retrieve
-	// the collected spans.
-	exporter, err := jaeger.NewExporter(jaeger.Options{
-		Endpoint: fmt.Sprintf("http://%s", svcAddr),
-		Process: jaeger.Process{
-			ServiceName: "productcatalogservice",
-		},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	trace.RegisterExporter(exporter)
-	log.Info("jaeger initialization completed.")
-}
+// func initJaegerTracing() {
+// 	svcAddr := os.Getenv("JAEGER_SERVICE_ADDR")
+// 	if svcAddr == "" {
+// 		log.Info("jaeger initialization disabled.")
+// 		return
+// 	}
+// 	// Register the Jaeger exporter to be able to retrieve
+// 	// the collected spans.
+// 	exporter, err := jaeger.NewExporter(jaeger.Options{
+// 		Endpoint: fmt.Sprintf("http://%s", svcAddr),
+// 		Process: jaeger.Process{
+// 			ServiceName: "productcatalogservice",
+// 		},
+// 	})
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	trace.RegisterExporter(exporter)
+// 	log.Info("jaeger initialization completed.")
+// }
 
-func initStats(exporter *stackdriver.Exporter) {
-	view.SetReportingPeriod(60 * time.Second)
-	view.RegisterExporter(exporter)
-	if err := view.Register(ocgrpc.DefaultServerViews...); err != nil {
-		log.Info("Error registering default server views")
-	} else {
-		log.Info("Registered default server views")
-	}
-}
+// func initStats(exporter *stackdriver.Exporter) {
+// 	view.SetReportingPeriod(60 * time.Second)
+// 	view.RegisterExporter(exporter)
+// 	if err := view.Register(ocgrpc.DefaultServerViews...); err != nil {
+// 		log.Info("Error registering default server views")
+// 	} else {
+// 		log.Info("Registered default server views")
+// 	}
+// }
 
-func initStackdriverTracing() {
-	// TODO(ahmetb) this method is duplicated in other microservices using Go
-	// since they are not sharing packages.
-	for i := 1; i <= 3; i++ {
-		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+// func initStackdriverTracing() {
+// 	// TODO(ahmetb) this method is duplicated in other microservices using Go
+// 	// since they are not sharing packages.
+// 	for i := 1; i <= 3; i++ {
+// 		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+// 		if err != nil {
+// 			log.Warnf("failed to initialize Stackdriver exporter: %+v", err)
+// 		} else {
+// 			trace.RegisterExporter(exporter)
+// 			trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+// 			log.Info("registered Stackdriver tracing")
+
+// 			// Register the views to collect server stats.
+// 			initStats(exporter)
+// 			return
+// 		}
+// 		d := time.Second * 10 * time.Duration(i)
+// 		log.Infof("sleeping %v to retry initializing Stackdriver exporter", d)
+// 		time.Sleep(d)
+// 	}
+// 	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
+// }
+
+func initLightstepTracing(ctx context.Context, log logrus.FieldLogger) {
+	ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
+
+		//Define system resource
+		resource := resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("productcatalogservice"),
+		)
+		//OTLP trace exporter
+		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
+			otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+			otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+			otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+			otlptracegrpc.WithCompressor(gzip.Name),),
+		)
 		if err != nil {
-			log.Warnf("failed to initialize Stackdriver exporter: %+v", err)
-		} else {
-			trace.RegisterExporter(exporter)
-			trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-			log.Info("registered Stackdriver tracing")
-
-			// Register the views to collect server stats.
-			initStats(exporter)
-			return
+			log.Fatalf("Could not start web server: %s", err)
 		}
-		d := time.Second * 10 * time.Duration(i)
-		log.Infof("sleeping %v to retry initializing Stackdriver exporter", d)
-		time.Sleep(d)
-	}
-	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
+
+		// Define TracerProvider
+		tracerProvider := sdktrace.NewTracerProvider(
+			sdktrace.WithSampler(sdktrace.AlwaysSample()),
+			sdktrace.WithResource(resource),
+			sdktrace.WithBatcher(exporter),
+		)
+
+		// Set TracerProvider
+		otel.SetTracerProvider(tracerProvider)
+
+		// //Set b3 headers
+		// props := []propagation.TextMapPropagator{
+		// b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader)),
+		// propagation.Baggage{},
+		// propagation.TraceContext{},
+		// }
+
+		// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		// 	props...,
+		// ))
+
+		//Set context propagation type
+		otel.SetTextMapPropagator(propagation.TraceContext{})
+
 }
 
-func initTracing() {
-	initJaegerTracing()
-	initStackdriverTracing()
+func initTracing(ctx context.Context, log logrus.FieldLogger) {
+	// This is a demo app with low QPS. trace.AlwaysSample() is used here
+	// to make sure traces are available for observation and analysis.
+	// In a production environment or high QPS setup please use
+	// trace.ProbabilitySampler set at the desired probability.
+	// sdktrace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+	initLightstepTracing(ctx, log)
+	// initJaegerTracing(log)
+	// initStackdriverTracing(log)
+
 }
 
 func initProfiling(service, version string) {
@@ -272,6 +344,7 @@ func (p *productCatalog) ListProducts(context.Context, *pb.Empty) (*pb.ListProdu
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
+	// trace.SpanFromContext(ctx).SetAttributes(attribute.String("productId", req.Id))
 	time.Sleep(extraLatency)
 	var found *pb.Product
 	for i := 0; i < len(parseCatalog()); i++ {
@@ -280,6 +353,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		}
 	}
 	if found == nil {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Bool("error", true))
 		return nil, status.Errorf(codes.NotFound, "no product with ID %s", req.Id)
 	}
 	return found, nil

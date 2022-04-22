@@ -15,6 +15,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -27,9 +28,21 @@ import (
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"golang.org/x/net/context"
+	"go.opentelemetry.io/otel"
+	// "go.opentelemetry.io/contrib/propagators/b3"
+	// "go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
+	// "go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
@@ -58,9 +71,11 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
+
 	if os.Getenv("DISABLE_TRACING") == "" {
 		log.Info("Tracing enabled.")
-		go initTracing()
+		initTracing(ctx, log)
 	} else {
 		log.Info("Tracing disabled.")
 	}
@@ -84,7 +99,12 @@ func main() {
 	}
 
 	var srv *grpc.Server
-	if os.Getenv("DISABLE_STATS") == "" {
+	if os.Getenv("DISABLE_TRACING") == "" {
+		srv = grpc.NewServer(
+		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+		)
+	} else if os.Getenv("DISABLE_STATS") == "" {
 		log.Info("Stats enabled.")
 		srv = grpc.NewServer(grpc.StatsHandler(&ocgrpc.ServerHandler{}))
 	} else {
@@ -209,9 +229,62 @@ func initStackdriverTracing() {
 	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
 }
 
-func initTracing() {
-	initJaegerTracing()
-	initStackdriverTracing()
+func initLightstepTracing(ctx context.Context, log logrus.FieldLogger) {
+	ls_access_token, _ := os.LookupEnv("LS_ACCESS_TOKEN")
+
+		//Define system resource
+		resource := resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String("checkoutservice"),
+		)
+		//OTLP trace exporter
+		exporter, err := otlptrace.New(ctx, otlptracegrpc.NewClient(
+			otlptracegrpc.WithTLSCredentials(credentials.NewClientTLSFromCert(nil, "")),
+			otlptracegrpc.WithEndpoint("ingest.lightstep.com:443"),
+			otlptracegrpc.WithHeaders(map[string]string{"lightstep-access-token":ls_access_token}),
+			otlptracegrpc.WithCompressor(gzip.Name),),
+		)
+		if err != nil {
+			log.Fatalf("Could not start web server: %s", err)
+		}
+
+		// Define TracerProvider
+		tracerProvider := sdktrace.NewTracerProvider(
+			sdktrace.WithSampler(sdktrace.AlwaysSample()),
+			sdktrace.WithResource(resource),
+			sdktrace.WithBatcher(exporter),
+		)
+
+		// Set TracerProvider
+		otel.SetTracerProvider(tracerProvider)
+
+		// //Set b3 headers
+		// props := []propagation.TextMapPropagator{
+		// b3.New(b3.WithInjectEncoding(b3.B3MultipleHeader)),
+		// propagation.Baggage{},
+		// propagation.TraceContext{},
+		// }
+
+		// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		// 	props...,
+		// ))
+
+		//Set context propagation type
+		otel.SetTextMapPropagator(propagation.TraceContext{})
+
+}
+
+func initTracing(ctx context.Context, log logrus.FieldLogger) {
+	// This is a demo app with low QPS. trace.AlwaysSample() is used here
+	// to make sure traces are available for observation and analysis.
+	// In a production environment or high QPS setup please use
+	// trace.ProbabilitySampler set at the desired probability.
+	// sdktrace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+	initLightstepTracing(ctx, log)
+	// initJaegerTracing(log)
+	// initStackdriverTracing(log)
+
 }
 
 func initProfiling(service, version string) {
