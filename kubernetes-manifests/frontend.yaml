@@ -67,7 +67,7 @@ spec:
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: "http://otelcollector:4317"
+            value: "otelcollector:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: "service.name=frontend,service.version=1.0.0"
           - name: ENV_PLATFORM

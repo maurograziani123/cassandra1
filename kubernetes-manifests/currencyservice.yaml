@@ -37,7 +37,7 @@ spec:
         - name: PORT
           value: "7000"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://otelcollector:4317"
+          value: "otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=currencyservice,service.version=1.0.0"  
         readinessProbe:
