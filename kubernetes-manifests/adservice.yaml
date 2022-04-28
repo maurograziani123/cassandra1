@@ -31,10 +31,7 @@ spec:
       - name: server
         image: $REPO_PREFIX/adservice:latest
         ports:
-        - containerPort: 9555
-        envFrom:
-        - configMapRef:
-            name: lightstep-configmap         
+        - containerPort: 9555     
         env:
         - name: PORT
           value: 9555

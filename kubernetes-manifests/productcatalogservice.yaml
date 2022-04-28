@@ -31,10 +31,7 @@ spec:
       - name: server
         image: $REPO_PREFIX/productcatalogservice:latest
         ports:
-        - containerPort: 3550
-        envFrom:
-        - configMapRef:
-            name: lightstep-configmap         
+        - containerPort: 3550       
         env:
         - name: PORT
           value: "3550"
