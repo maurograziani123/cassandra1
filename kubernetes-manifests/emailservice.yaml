@@ -38,12 +38,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=emailservice,service.version=1.0.0"
-        - name: LS_ACCESS_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: lightstep-credentials
-              key: accessToken          
+          value: "service.name=emailservice,service.version=1.0.0"        
         readinessProbe:
           periodSeconds: 5
           exec:

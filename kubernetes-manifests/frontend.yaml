@@ -48,10 +48,7 @@ spec:
               port: 8080
               httpHeaders:
               - name: "Cookie"
-                value: "shop_session-id=x-liveness-probe"
-          envFrom:
-          - configMapRef:
-              name: lightstep-configmap                
+                value: "shop_session-id=x-liveness-probe"               
           env:
           - name: PORT
             value: "8080"
@@ -74,12 +71,7 @@ spec:
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: "service.name=frontend,service.version=1.0.0"
           - name: ENV_PLATFORM
-            value: "azure"
-          - name: LS_ACCESS_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: lightstep-credentials
-                key: accessToken              
+            value: "azure"            
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
           # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
           # - name: ENV_PLATFORM 

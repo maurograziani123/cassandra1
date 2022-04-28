@@ -41,14 +41,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=productcatalogservice,service.version=1.0.0"
-        - name: LS_SERVICE_NAME
-          value: productcatalogservice
-        - name: LS_ACCESS_TOKEN
-          valueFrom:
-            secretKeyRef:
-                name: lightstep-credentials
-                key: accessToken          
+          value: "service.name=productcatalogservice,service.version=1.0.0"         
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
