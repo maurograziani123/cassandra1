@@ -15,7 +15,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: otelcollector
-        image: otelcollector
+        image: otel/opentelemetry-collector
         ports:
         - containerPort: 1888
         - containerPort: 8888
