@@ -30,7 +30,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: frontend
+          image: $REPO_PREFIX/frontend:latest
           ports:
           - containerPort: 8080
           readinessProbe:
@@ -49,6 +49,9 @@ spec:
               httpHeaders:
               - name: "Cookie"
                 value: "shop_session-id=x-liveness-probe"
+          envFrom:
+          - configMapRef:
+              name: lightstep-configmap                
           env:
           - name: PORT
             value: "8080"
@@ -72,6 +75,13 @@ spec:
             value: "service.name=frontend,service.version=1.0.0"
           - name: ENV_PLATFORM
             value: "azure"
+          - name: LS_SERVICE_NAME
+            value: frontend
+          - name: LS_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: lightstep-credentials
+                key: accessToken              
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
           # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
           # - name: ENV_PLATFORM 

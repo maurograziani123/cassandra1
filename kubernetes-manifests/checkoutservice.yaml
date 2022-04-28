@@ -28,7 +28,7 @@ spec:
       serviceAccountName: default
       containers:
         - name: server
-          image: checkoutservice
+          image: $REPO_PREFIX/checkoutservice:latest
           ports:
           - containerPort: 5050
           readinessProbe:
