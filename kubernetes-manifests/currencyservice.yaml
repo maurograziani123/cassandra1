@@ -40,6 +40,11 @@ spec:
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=currencyservice,service.version=1.0.0"
+        - name: LS_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lightstep-credentials
+              key: accessToken          
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]

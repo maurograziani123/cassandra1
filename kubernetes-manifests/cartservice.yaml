@@ -39,6 +39,11 @@ spec:
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=cartservice,service.version=1.0.0"
+        - name: LS_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lightstep-credentials
+              key: accessToken          
         resources:
           requests:
             cpu: 200m

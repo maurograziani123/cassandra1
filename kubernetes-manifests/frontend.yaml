@@ -75,8 +75,6 @@ spec:
             value: "service.name=frontend,service.version=1.0.0"
           - name: ENV_PLATFORM
             value: "azure"
-          - name: LS_SERVICE_NAME
-            value: frontend
           - name: LS_ACCESS_TOKEN
             valueFrom:
               secretKeyRef:

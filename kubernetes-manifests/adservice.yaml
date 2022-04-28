@@ -43,8 +43,6 @@ spec:
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=adservice,service.version=1.0.0"
-        - name: LS_SERVICE_NAME
-          value: adservice
         - name: LS_ACCESS_TOKEN
           valueFrom:
             secretKeyRef:
