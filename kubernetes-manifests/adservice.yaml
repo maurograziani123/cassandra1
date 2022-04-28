@@ -32,6 +32,9 @@ spec:
         image: $REPO_PREFIX/adservice:latest
         ports:
         - containerPort: 9555
+        envFrom:
+        - configMapRef:
+            name: lightstep-configmap         
         env:
         - name: PORT
           value: "9555"
@@ -40,6 +43,13 @@ spec:
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=adservice,service.version=1.0.0"
+        - name: LS_SERVICE_NAME
+          value: adservice
+        - name: LS_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: lightstep-credentials
+              key: accessToken          
         resources:
           requests:
             cpu: 400m

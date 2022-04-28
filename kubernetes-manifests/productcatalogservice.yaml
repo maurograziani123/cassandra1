@@ -32,6 +32,9 @@ spec:
         image: $REPO_PREFIX/productcatalogservice:latest
         ports:
         - containerPort: 3550
+        envFrom:
+        - configMapRef:
+            name: lightstep-configmap         
         env:
         - name: PORT
           value: "3550"
@@ -39,6 +42,13 @@ spec:
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=productcatalogservice,service.version=1.0.0"
+        - name: LS_SERVICE_NAME
+          value: productcatalogservice
+        - name: LS_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+                name: lightstep-credentials
+                key: accessToken          
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
