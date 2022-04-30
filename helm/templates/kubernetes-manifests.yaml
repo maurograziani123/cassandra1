@@ -97,7 +97,7 @@ spec:
         - name: PORT
           value: "8080"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=emailservice,service.version=1.0.0"       
         readinessProbe:
@@ -170,7 +170,7 @@ spec:
           - name: CART_SERVICE_ADDR
             value: "cartservice:7070"
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: "otelcollector:4317"
+            value: "http://otelcollector:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: "service.name=checkoutservice,service.version=1.0.0"       
           resources:
@@ -228,7 +228,7 @@ spec:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
           value: "productcatalogservice:3550"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=recommendationservice,service.version=1.0.0"        
         resources:
@@ -288,7 +288,7 @@ spec:
               port: 8080
               httpHeaders:
               - name: "Cookie"
-                value: "shop_session-id=x-liveness-probe"             
+                value: "shop_session-id=x-liveness-probe"
           env:
           - name: PORT
             value: "8080"
@@ -307,11 +307,11 @@ spec:
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: "otelcollector:4317"
+            value: "http://otelcollector:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=frontend,service.version=1.0.0"          
+            value: "service.name=frontend,service.version=1.0.0"    
           - name: ENV_PLATFORM
-            value: "azure"      
+            value: "azure"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
           # # When not set, defaults to "local" unless running in GKE, otherwies auto-sets to gcp 
           # - name: ENV_PLATFORM 
@@ -376,7 +376,7 @@ spec:
         - name: PORT
           value: "50051"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=paymentservice,service.version=1.0.0"                
         readinessProbe:
@@ -430,7 +430,7 @@ spec:
         - name: PORT
           value: "3550"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=productcatalogservice,service.version=1.0.0"        
         readinessProbe:
@@ -484,7 +484,7 @@ spec:
         - name: REDIS_ADDR
           value: "redis-cart:6379"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=cartservice,service.version=1.0.0"               
         resources:
@@ -593,7 +593,7 @@ spec:
         - name: PORT
           value: "7000"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=currencyservice,service.version=1.0.0"         
         readinessProbe:
@@ -646,7 +646,7 @@ spec:
         - name: PORT
           value: "50051"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=shippingservice,service.version=1.0.0"         
         readinessProbe:
@@ -754,7 +754,7 @@ spec:
         - name: PORT
           value: "9555"
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "otelcollector:4317"
+          value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: "service.name=adservice,service.version=1.0.0"       
         resources:
