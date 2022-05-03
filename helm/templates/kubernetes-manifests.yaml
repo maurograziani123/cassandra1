@@ -188,7 +188,7 @@ spec:
             value: "currencyservice:7000"
           - name: CART_SERVICE_ADDR
             value: "cartservice:7070"
-          # Lightstep Instrumentation
+          # # Lightstep Instrumentation
           # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           #   value: "http://otelcollector:4317"
           # - name: OTEL_RESOURCE_ATTRIBUTES
@@ -397,7 +397,7 @@ spec:
         env:
         - name: PORT
           value: "50051"
-        # Lightstep Instrumentation
+        # # Lightstep Instrumentation
         # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         #   value: "http://otelcollector:4317"
         # - name: OTEL_RESOURCE_ATTRIBUTES
@@ -453,10 +453,10 @@ spec:
         - name: PORT
           value: "3550"
         # Lightstep Instrumentation
-        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://otelcollector:4317"
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=productcatalogservice,service.version=1.0.0"        
+        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        #   value: "http://otelcollector:4317"
+        # - name: OTEL_RESOURCE_ATTRIBUTES
+        #   value: "service.name=productcatalogservice,service.version=1.0.0"        
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
@@ -671,7 +671,7 @@ spec:
         env:
         - name: PORT
           value: "50051"
-        # # Lightstep Instrumentation
+        # Lightstep Instrumentation
         # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         #   value: "http://otelcollector:4317"
         # - name: OTEL_RESOURCE_ATTRIBUTES
