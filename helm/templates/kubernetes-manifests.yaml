@@ -83,7 +83,7 @@ spec:
     app: otelcollector
   ports:
   - name: "4317"
-    port: 4317
+    port: 80
     targetPort: 4317
 ---
 apiVersion: apps/v1
