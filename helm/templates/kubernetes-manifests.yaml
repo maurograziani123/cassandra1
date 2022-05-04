@@ -1,96 +1,96 @@
 # Lightstep Instrumentation
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: otelcollector
-# spec:
-#   selector:
-#     matchLabels:
-#       app: otelcollector
-#   template:
-#     metadata:
-#       labels:
-#         app: otelcollector
-#     spec:
-#       serviceAccountName: default
-#       terminationGracePeriodSeconds: 5
-#       containers:
-#       - name: otelcollector
-#         # image: otel/opentelemetry-collector-contrib:0.49.0 
-#         # image: ghcr.io/lightstep/lightstep-partner-toolkit-collector:latest
-#         args:
-#         - --config=/conf/conf.yaml
-#         volumeMounts:
-#         - name: config-volume
-#           mountPath: /conf/conf.yaml
-#           subPath: collector-config
-#         ports:
-#         - containerPort: 1888
-#         - containerPort: 8888
-#         - containerPort: 8889
-#         - containerPort: 13133
-#         - containerPort: 4317
-#         - containerPort: 55670 
-#         - containerPort: 55688          
-#         env:
-#         # - name: KEY
-#         #   value: VALUE
-#         resources:
-#           requests:
-#             cpu: 200m
-#             memory: 180Mi
-#           limits:
-#             cpu: 300m
-#             memory: 300Mi
-#       volumes:
-#       - name: config-volume
-#         configMap:
-#           name: lightstep-configmap 
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: otelcollector
-# spec:
-#   type: ClusterIP
-#   selector:
-#     app: otelcollector
-#   ports:
-#   - name: "1888"
-#     port: 1888
-#     targetPort: 1888
-#   - name: "8888"
-#     port: 8888
-#     targetPort: 8888
-#   - name: "8889"
-#     port: 8889
-#     targetPort: 8889
-#   - name: "13133"
-#     port: 13133
-#     targetPort: 13133
-#   - name: "4317"
-#     port: 4317
-#     targetPort: 4317
-#   - name: "55670"
-#     port: 55670
-#     targetPort: 55670
-#   - name: "55688"
-#     port: 55688
-#     targetPort: 55688
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: otelcollector-external
-# spec:
-#   type: LoadBalancer
-#   selector:
-#     app: otelcollector
-#   ports:
-#   - name: "55688"
-#     port: 55688
-#     targetPort: 55688
-# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otelcollector
+spec:
+  selector:
+    matchLabels:
+      app: otelcollector
+  template:
+    metadata:
+      labels:
+        app: otelcollector
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: otelcollector
+        # image: otel/opentelemetry-collector-contrib:0.49.0 
+        image: ghcr.io/lightstep/lightstep-partner-toolkit-collector:latest
+        args:
+        - --config=/conf/conf.yaml
+        volumeMounts:
+        - name: config-volume
+          mountPath: /conf/conf.yaml
+          subPath: collector-config
+        ports:
+        - containerPort: 1888
+        - containerPort: 8888
+        - containerPort: 8889
+        - containerPort: 13133
+        - containerPort: 4317
+        - containerPort: 55670 
+        - containerPort: 55688          
+        env:
+        # - name: KEY
+        #   value: VALUE
+        resources:
+          requests:
+            cpu: 200m
+            memory: 180Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+      volumes:
+      - name: config-volume
+        configMap:
+          name: lightstep-configmap 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcollector
+spec:
+  type: ClusterIP
+  selector:
+    app: otelcollector
+  ports:
+  - name: "1888"
+    port: 1888
+    targetPort: 1888
+  - name: "8888"
+    port: 8888
+    targetPort: 8888
+  - name: "8889"
+    port: 8889
+    targetPort: 8889
+  - name: "13133"
+    port: 13133
+    targetPort: 13133
+  - name: "4317"
+    port: 4317
+    targetPort: 4317
+  - name: "55670"
+    port: 55670
+    targetPort: 55670
+  - name: "55688"
+    port: 55688
+    targetPort: 55688
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcollector-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: otelcollector
+  ports:
+  - name: "55688"
+    port: 55688
+    targetPort: 55688
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -115,10 +115,10 @@ spec:
         - name: PORT
           value: "8080"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=emailservice,service.version=1.0.0"       
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=emailservice,service.version=1.0.0"       
         readinessProbe:
           periodSeconds: 5
           exec:
@@ -188,11 +188,11 @@ spec:
             value: "currencyservice:7000"
           - name: CART_SERVICE_ADDR
             value: "cartservice:7070"
-          # # Lightstep Instrumentation
-          # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          #   value: "http://otelcollector:4317"
-          # - name: OTEL_RESOURCE_ATTRIBUTES
-          #   value: "service.name=checkoutservice,service.version=1.0.0"       
+          # Lightstep Instrumentation
+          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            value: "http://otelcollector:4317"
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "service.name=checkoutservice,service.version=1.0.0"       
           resources:
             requests:
               cpu: 100m
@@ -248,10 +248,10 @@ spec:
         - name: PRODUCT_CATALOG_SERVICE_ADDR
           value: "productcatalogservice:3550"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=recommendationservice,service.version=1.0.0"        
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=recommendationservice,service.version=1.0.0"        
         resources:
           requests:
             cpu: 100m
@@ -328,10 +328,10 @@ spec:
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
           # Lightstep Instrumentation
-          # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          #   value: "http://otelcollector:4317"
-          # - name: OTEL_RESOURCE_ATTRIBUTES
-          #   value: "service.name=frontend,service.version=1.0.0"    
+          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+            value: "http://otelcollector:4317"
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: "service.name=frontend,service.version=1.0.0"    
           - name: ENV_PLATFORM
             value: "azure"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
@@ -397,11 +397,11 @@ spec:
         env:
         - name: PORT
           value: "50051"
-        # # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=paymentservice,service.version=1.0.0"                
+        # Lightstep Instrumentation
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=paymentservice,service.version=1.0.0"                
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
@@ -453,10 +453,10 @@ spec:
         - name: PORT
           value: "3550"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=productcatalogservice,service.version=1.0.0"        
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=productcatalogservice,service.version=1.0.0"        
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:3550"]
@@ -508,10 +508,10 @@ spec:
         - name: REDIS_ADDR
           value: "redis-cart:6379"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=cartservice,service.version=1.0.0"               
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=cartservice,service.version=1.0.0"               
         resources:
           requests:
             cpu: 200m
@@ -618,10 +618,10 @@ spec:
         - name: PORT
           value: "7000"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=currencyservice,service.version=1.0.0"         
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=currencyservice,service.version=1.0.0"         
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:7000"]
@@ -672,10 +672,10 @@ spec:
         - name: PORT
           value: "50051"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=shippingservice,service.version=1.0.0"         
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=shippingservice,service.version=1.0.0"         
         readinessProbe:
           periodSeconds: 5
           exec:
@@ -781,10 +781,10 @@ spec:
         - name: PORT
           value: "9555"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=adservice,service.version=1.0.0"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=adservice,service.version=1.0.0"
         resources:
           requests:
             cpu: 400m
