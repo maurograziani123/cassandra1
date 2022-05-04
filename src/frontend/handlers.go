@@ -87,7 +87,7 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 	// Set ENV_PLATFORM (default to local if not set; use env var if set; otherwise detect GCP, which overrides env)_
 	var env = os.Getenv("ENV_PLATFORM")
 	// Only override from env variable if set + valid env
-	if env == "" || stringinSlice(validEnvs, env) {
+	if env == "" || stringinSlice(validEnvs, env) == false {
 		fmt.Println("env platform is either empty or invalid")
 		env = "local"
 	}
