@@ -80,7 +80,7 @@ stages:
         steps:
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
-            connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+            connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
             artifactToolIdExists: false
             artifactRegistrationPayload: |
               {
