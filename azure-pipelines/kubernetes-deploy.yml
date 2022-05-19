@@ -73,43 +73,43 @@ stages:
   ##############################################################################
   ###                       SERVICENOW DEVOPS CHANGE                         ###
   ##############################################################################
-  # - stage: DevOps_Change
-  #   jobs:
-  #     - job: DevOps_Change
-  #       pool: server
-  #       steps:
-  #       - task: ServiceNow-DevOps-Server-Artifact-Registration@1
-  #         inputs:
-  #           connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-  #           artifactToolIdExists: false
-  #           artifactRegistrationPayload: |
-  #             {
-  #               "artifacts": [
-  #                 {
-  #                   "name":  "$(serviceName)",
-  #                   "version": "1.0.$(build.buildId)",
-  #                   "semanticVersion": "1.0.$(build.buildId)",
-  #                   "repositoryName": "cassandra"
-  #                 }
-  #               ],
-  #               "pipelineName": "$(system.teamProject)/$(build.definitionName)",
-  #               "taskExecutionNumber": "$(build.buildId)",
-  #               "stageName": "$(system.jobDisplayName)",
-  #               "attemptNumber": "$(system.jobAttempt)",
-  #               "branchName": "$(build.sourceBranchName)"                
-  #             }
-  #       - task: ServiceNow-DevOps-Server-Change-Acceleration@1
-  #         inputs:
-  #           connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
-  #           changeRequestDetails: |
-  #             {
-  #               "setCloseCode" : true,
-  #               "attributes": {
-  #                 "cmdb_ci": {
-  #                   "name": "$(serviceName)"
-  #                 }
-  #               }
-  #             }
+   - stage: DevOps_Change
+     jobs:
+       - job: DevOps_Change
+         pool: server
+         steps:
+         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
+           inputs:
+             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+             artifactToolIdExists: false
+             artifactRegistrationPayload: |
+               {
+                 "artifacts": [
+                   {
+                     "name":  "$(serviceName)",
+                     "version": "1.0.$(build.buildId)",
+                     "semanticVersion": "1.0.$(build.buildId)",
+                     "repositoryName": "cassandra"
+                   }
+                 ],
+                 "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                 "taskExecutionNumber": "$(build.buildId)",
+                 "stageName": "$(system.jobDisplayName)",
+                 "attemptNumber": "$(system.jobAttempt)",
+                 "branchName": "$(build.sourceBranchName)"                
+               }
+         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
+           inputs:
+             connectedServiceName: 'srecon21-cassandra-ServiceNow DevOps Service Connection'
+             changeRequestDetails: |
+               {
+                 "setCloseCode" : true,
+                 "attributes": {
+                   "cmdb_ci": {
+                     "name": "$(serviceName)"
+                   }
+                 }
+               }
   
   ##############################################################################
   ###                      DEPLOY IMAGE TO KUBERNETES                        ###
