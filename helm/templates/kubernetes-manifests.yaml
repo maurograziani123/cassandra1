@@ -1,95 +1,95 @@
- #Lightstep Instrumentation
- apiVersion: apps/v1
- kind: Deployment
- metadata:
-   name: otelcollector
- spec:
-   selector:
-     matchLabels:
-       app: otelcollector
-   template:
-     metadata:
-       labels:
-         app: otelcollector
-     spec:
-       serviceAccountName: default
-       terminationGracePeriodSeconds: 5
-       containers:
-       - name: otelcollector
-         image: otel/opentelemetry-collector-contrib:0.49.0 
-         # image: ghcr.io/lightstep/lightstep-partner-toolkit-collector:latest
-         args:
-         - --config=/conf/conf.yaml
-         volumeMounts:
-         - name: config-volume
-           mountPath: /conf/conf.yaml
-           subPath: collector-config
-         ports:
-         - containerPort: 1888
-         - containerPort: 8888
-         - containerPort: 8889
-         - containerPort: 13133
-         - containerPort: 4317
-         - containerPort: 55670 
-         - containerPort: 55688          
-         env:
-         # - name: KEY
-         #   value: VALUE
-         resources:
-           requests:
-             cpu: 200m
-             memory: 180Mi
-           limits:
-             cpu: 300m
-             memory: 300Mi
-       volumes:
-       - name: config-volume
-         configMap:
-           name: lightstep-configmap 
- ---
- apiVersion: v1
- kind: Service
- metadata:
-   name: otelcollector
- spec:
-   type: ClusterIP
-   selector:
-     app: otelcollector
-   ports:
-   - name: "1888"
-     port: 1888
-     targetPort: 1888
-   - name: "8888"
-     port: 8888
-     targetPort: 8888
-   - name: "8889"
-     port: 8889
-     targetPort: 8889
-   - name: "13133"
-     port: 13133
-     targetPort: 13133
-   - name: "4317"
-     port: 4317
-     targetPort: 4317
-   - name: "55670"
-     port: 55670
-     targetPort: 55670
-   - name: "55688"
-     port: 55688
-     targetPort: 55688
- ---
- apiVersion: v1
- kind: Service
- metadata:
-   name: otelcollector-external
- spec:
-   type: LoadBalancer
-   selector:
-     app: otelcollector
-   ports:
-   - name: "55688"
-     port: 55688
-     targetPort: 55688
+#Lightstep Instrumentation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otelcollector
+spec:
+  selector:
+    matchLabels:
+      app: otelcollector
+  template:
+    metadata:
+      labels:
+        app: otelcollector
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: otelcollector
+        image: otel/opentelemetry-collector-contrib:0.49.0 
+        # image: ghcr.io/lightstep/lightstep-partner-toolkit-collector:latest
+        args:
+        - --config=/conf/conf.yaml
+        volumeMounts:
+        - name: config-volume
+          mountPath: /conf/conf.yaml
+          subPath: collector-config
+        ports:
+        - containerPort: 1888
+        - containerPort: 8888
+        - containerPort: 8889
+        - containerPort: 13133
+        - containerPort: 4317
+        - containerPort: 55670 
+        - containerPort: 55688          
+        env:
+        # - name: KEY
+        #   value: VALUE
+        resources:
+          requests:
+            cpu: 200m
+            memory: 180Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+      volumes:
+      - name: config-volume
+        configMap:
+          name: lightstep-configmap 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcollector
+spec:
+  type: ClusterIP
+  selector:
+    app: otelcollector
+  ports:
+  - name: "1888"
+    port: 1888
+    targetPort: 1888
+  - name: "8888"
+    port: 8888
+    targetPort: 8888
+  - name: "8889"
+    port: 8889
+    targetPort: 8889
+  - name: "13133"
+    port: 13133
+    targetPort: 13133
+  - name: "4317"
+    port: 4317
+    targetPort: 4317
+  - name: "55670"
+    port: 55670
+    targetPort: 55670
+  - name: "55688"
+    port: 55688
+    targetPort: 55688
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcollector-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: otelcollector
+  ports:
+  - name: "55688"
+    port: 55688
+    targetPort: 55688
 ---
 apiVersion: apps/v1
 kind: Deployment
