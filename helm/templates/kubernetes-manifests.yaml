@@ -16,7 +16,7 @@
 #       terminationGracePeriodSeconds: 5
 #       containers:
 #       - name: otelcollector
-#         # image: otel/opentelemetry-collector-contrib:0.49.0 
+#         image: otel/opentelemetry-collector-contrib:0.49.0 
 #         # image: ghcr.io/lightstep/lightstep-partner-toolkit-collector:latest
 #         args:
 #         - --config=/conf/conf.yaml
@@ -115,10 +115,10 @@ spec:
         - name: PORT
           value: "8080"
         # Lightstep Instrumentation
-        # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        #   value: "http://otelcollector:4317"
-        # - name: OTEL_RESOURCE_ATTRIBUTES
-        #   value: "service.name=emailservice,service.version=1.0.0"       
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: "http://otelcollector:4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=emailservice,service.version=1.0.0"       
         readinessProbe:
           periodSeconds: 5
           exec:
