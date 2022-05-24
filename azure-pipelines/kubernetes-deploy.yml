@@ -98,6 +98,27 @@ stages:
                 "attemptNumber": "$(system.jobAttempt)",
                 "branchName": "$(build.sourceBranchName)"                
               }
+        - task: ServiceNow.vss-services-servicenow-devops.serviceNowDevOps-agent-package-registration.ServiceNow-DevOps-Agent-Package-Registration@1
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
+            packageName: 'Boutique'
+            artifactsPayload: |
+            {
+               "artifacts": [
+               {
+                   "name": "$(serviceName)",
+                   "repositoryName": "cassandra1",
+                   "version": "1.0.$(build.buildId)",
+                   "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+                   "taskExecutionNumber":"$(build.buildId)",
+                   "stageName":"$(system.jobDisplayName)",
+                   "branchName":"$(build.sourceBranchName)"
+               }],
+               "pipelineName":"$(system.teamProject)/$(build.definitionName)",
+               "taskExecutionNumber":"$(build.buildId)",
+               "stageName":"$(system.jobDisplayName)",
+               "branchName":"$(build.sourceBranchName)"
+            }
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
