@@ -331,7 +331,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: "http://otelcollector:4317"
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: "service.name=frontend,service.version=1.0.0"    
+            value: "service.name=frontend,service.version=1.0.1"    
           - name: ENV_PLATFORM
             value: "azure"
           # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
