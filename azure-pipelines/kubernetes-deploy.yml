@@ -109,7 +109,7 @@ stages:
                      "name": "$(serviceName)"
                   },
                  "business_service": "Boutique",
-                 "service_offering": "Boutique-frontend offering"
+                 "service_offering": "Boutique-frontend offering",
                  "assignment_group": "Team Boutique"
                 }
               }
