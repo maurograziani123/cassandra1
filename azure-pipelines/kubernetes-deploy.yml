@@ -108,9 +108,9 @@ stages:
                   "cmdb_ci": {
                      "name": "$(serviceName)"
                   },
-                 "business_service": "Boutique",
-                 "service_offering": "Boutique-frontend offering",
-                 "assignment_group": "Team Boutique"
+                  "business_service": "Boutique",
+                  "service_offering": "Boutique-frontend offering",
+                  "assignment_group": "Team Boutique"
                 }
               }
   
