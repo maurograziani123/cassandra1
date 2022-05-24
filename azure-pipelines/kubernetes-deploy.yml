@@ -109,15 +109,15 @@ stages:
                    "name": "$(serviceName)",
                    "repositoryName": "cassandra1",
                    "version": "1.0.$(build.buildId)",
-                   "pipelineName":"$(system.teamProject)/$(build.definitionName)",
-                   "taskExecutionNumber":"$(build.buildId)",
-                   "stageName":"$(system.jobDisplayName)",
-                   "branchName":"$(build.sourceBranchName)"
+                   "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+                   "taskExecutionNumber": "$(build.buildId)",
+                   "stageName": "$(system.jobDisplayName)",
+                   "branchName": "$(build.sourceBranchName)"
                }],
-               "pipelineName":"$(system.teamProject)/$(build.definitionName)",
-               "taskExecutionNumber":"$(build.buildId)",
-               "stageName":"$(system.jobDisplayName)",
-               "branchName":"$(build.sourceBranchName)"
+               "pipelineName": "$(system.teamProject)/$(build.definitionName)",
+               "taskExecutionNumber": "$(build.buildId)",
+               "stageName": "$(system.jobDisplayName)",
+               "branchName": "$(build.sourceBranchName)"
             }
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
