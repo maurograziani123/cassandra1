@@ -103,7 +103,7 @@ stages:
             connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
             packageName: 'Boutique'
             artifactsPayload: |
-            {
+             {
                "artifacts": [
                {
                    "name": "$(serviceName)",
