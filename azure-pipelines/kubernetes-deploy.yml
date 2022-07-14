@@ -80,7 +80,7 @@ stages:
         steps:
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
-            connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             artifactToolIdExists: false
             artifactRegistrationPayload: |
               {
@@ -100,7 +100,7 @@ stages:
               }
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
-            connectedServiceName: 'loomsalesdemoforschweiz-CloudNative-ServiceNow DevOps Service Connection'
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             changeRequestDetails: |
               {
                 "setCloseCode" : true,
