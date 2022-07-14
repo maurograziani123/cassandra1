@@ -28,7 +28,7 @@ stages:
       - job: Run_Tests
         steps:
         - bash: |
-            set -x # Echo Commands
+            set -x # Echo Commands a test
             # Install Tools
             pip install -U pytest pytest-html pytest-xdist pytest-nunit
             # Change Dir
