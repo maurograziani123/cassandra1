@@ -109,13 +109,13 @@ stages:
                      "name": "$(serviceName)"
                   },
                   "business_service": {
-                     "name" : "Boutique"
+                     "name" : "Boutique_MS"
                   },
                   "service_offering": { 
                      "name" : "Boutique-frontend offering"
                   },
                   "assignment_group": {
-                     "name": "Team Boutique"
+                     "name": "Application Supporte"
                   }
                 }
               }
