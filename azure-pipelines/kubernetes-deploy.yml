@@ -128,7 +128,7 @@ stages:
       - job: Deploy_Image
         steps:
         - bash: |
-            set -x # Echo Commands test
+            set -x # Echo Commands
             # Prem Yaml
             export REPO_PREFIX=$(repoPrefix)
             # Change Dir
