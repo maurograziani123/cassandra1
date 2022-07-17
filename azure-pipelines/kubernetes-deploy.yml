@@ -52,7 +52,7 @@ stages:
       - job: Build_Image
         steps:
         - bash: |
-            set -x # Echo Commands test
+            set -x # Echo Commands
             # Docker Login
             echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin        
             # Build Image
