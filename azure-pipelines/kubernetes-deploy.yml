@@ -106,7 +106,7 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "$(serviceName)"
+                     "name": "LS-dennis-project"
                   },
                   "business_service": {
                      "name" : "Boutique_MS"
