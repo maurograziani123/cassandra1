@@ -2,7 +2,7 @@
   "services": [
     {
       "$class": "Business Service",
-      "name": "Boutique",
+      "name": "Boutique BS",
       "description": "Boutique for Beautiful Things"
     },
     {
@@ -52,7 +52,7 @@
   ],
   "relationships": [
     {
-      "parent": "Boutique",
+      "parent": "Boutique BS",
       "child": "frontend"
     },
     {
