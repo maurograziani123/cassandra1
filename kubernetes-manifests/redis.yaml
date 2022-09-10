@@ -29,7 +29,7 @@ spec:
       - name: redis
         image: redis:alpine
         ports:
-        - containerPort: 6379
+        - containerPort: 6378
         readinessProbe:
           periodSeconds: 5
           tcpSocket:
