@@ -106,13 +106,10 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "LS-dennis-project"
+                     "name": "$(serviceName)"
                   },
                   "business_service": {
                      "name" : "Boutique_MS"
-                  },
-                  "service_offering": { 
-                     "name" : "Boutique-frontend offering"
                   },
                   "assignment_group": {
                      "name": "Application Support"
