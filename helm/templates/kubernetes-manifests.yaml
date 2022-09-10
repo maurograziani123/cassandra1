@@ -506,7 +506,7 @@ spec:
         - containerPort: 7070
         env:
         - name: REDIS_ADDR
-          value: "redis-cart:6378"
+          value: "redis-cart:6379"
         # Lightstep Instrumentation
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://otelcollector:4317"
