@@ -755,7 +755,7 @@ spec:
   ports:
   - name: redis
     port: 6379
-    targetPort: 6378
+    targetPort: 6379
 ---
 apiVersion: apps/v1
 kind: Deployment
