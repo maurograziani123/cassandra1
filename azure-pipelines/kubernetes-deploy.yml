@@ -105,7 +105,7 @@ stages:
               {
                 "setCloseCode" : true,
                 "attributes": {
-                  "cmdb_ci_service_discovered": {
+                  "cmdb_ci_service": {
                      "name": "$(serviceName)"
                   },
                   "business_service": {
