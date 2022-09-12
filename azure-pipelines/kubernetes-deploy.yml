@@ -106,7 +106,7 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "$(serviceName)"
+                     "name": "$(serviceName)",
                      "class": "Mapped Application Service"
                   },
                   "business_service": {
