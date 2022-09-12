@@ -754,7 +754,7 @@ spec:
     app: redis-cart
   ports:
   - name: redis
-    port: 6378
+    port: 6379
     targetPort: 6379
 ---
 apiVersion: apps/v1
