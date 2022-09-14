@@ -138,7 +138,7 @@ stages:
                # Substitute
                envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
             else
-               envsubst kubernetes-manifests/$(serviceName).yaml > kubernetes-manifests/$(serviceName).subst     
+               cat kubernetes-manifests/$(serviceName).yaml > kubernetes-manifests/$(serviceName).subst     
             fi
           displayName: 'Prepping Yaml'        
         - task: Kubernetes@1
