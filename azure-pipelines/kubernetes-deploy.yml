@@ -67,7 +67,10 @@ stages:
               cd src/$(serviceName)
             fi
             # Build Image   
-            docker build -t $IMAGE . && docker push $IMAGE   
+            if [ $(serviceName) != "redis" ] 
+            then
+              docker build -t $IMAGE . && docker push $IMAGE   
+            fi
           displayName: 'Building Image'
 
   ##############################################################################
