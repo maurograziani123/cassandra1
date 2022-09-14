@@ -132,7 +132,7 @@ stages:
             # Prem Yaml
             export REPO_PREFIX=$(repoPrefix)
             # Change Dir
-            [ $(serviceName) != "redis" ]
+            if [ $(serviceName) != "redis" ]
             then
                cd src/$(serviceName) 
                # Substitute
