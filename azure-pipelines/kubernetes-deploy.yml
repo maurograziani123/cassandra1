@@ -51,7 +51,7 @@ stages:
       - job: Upload
         steps:
         - script: cd kubernetes-manifests
-          name: changeset 
+          name: changedir 
         - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
           name: 'Uploadconfig'
           inputs:
