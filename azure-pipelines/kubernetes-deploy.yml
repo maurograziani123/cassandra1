@@ -54,11 +54,11 @@ stages:
           name: 'Uploadconfig'
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
-            configFile: 'kubernetes-manifests/$serviceName.yaml'
+            configFile: 'kubernetes-manifests/$(serviceName).yaml'
             #configFile: 'limits.conf'
             applicationName: 'Boutique'
             uploadTarget: 'component'
-            namePath: '$serviceName/$serviceName.yaml'
+            namePath: '$(serviceName)/$(serviceName).yaml'
             dataFormat: 'yaml'
             #changesetNumber: null
             autoCommit: true
