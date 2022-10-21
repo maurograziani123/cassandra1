@@ -50,13 +50,13 @@ stages:
     jobs:
       - job: Upload
         steps:
-        - script: cd kubernetes-manifests
+        - script: mv kubernetes-manifests kubernetesmanifests
           name: changedir 
         - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
           name: 'Uploadconfig'
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
-            configFile: '$(serviceName).yaml'
+            configFile: 'kubernetesmanifests/$(serviceName).yaml'
             #configFile: 'limits.conf'
             applicationName: 'Boutique'
             uploadTarget: 'component'
