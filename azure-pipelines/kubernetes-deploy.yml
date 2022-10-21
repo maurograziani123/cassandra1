@@ -60,7 +60,7 @@ stages:
             #configFile: 'limits.conf'
             applicationName: 'Boutique'
             uploadTarget: 'component'
-            namePath: $(serviceName)
+            namePath: 'frontend'
             dataFormat: 'yaml'
             #changesetNumber: null
             autoCommit: true
