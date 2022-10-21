@@ -65,6 +65,121 @@ stages:
             autoValidate: true        
         - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
           name: changeset  
+##############################################################################
+  ###                                Validate uploaded data.                ###
+  ##############################################################################
+  - stage: DevOPs_Config_validate
+    dependsOn: DevOPs_Config_Upload
+    condition: in(dependencies.DevOPs_Config_Upload.result, 'Succeeded')
+    variables:
+      varChSetName: $[stageDependencies.DevOPs_Config_Upload.Upload.outputs['changeset.chngnumber']]
+    jobs:
+      - job: validate
+        steps:
+        - script: echo $(varChSetName)
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+          name: getSnapshot
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: 'Boutique'
+            changesetNumber: '$(varChSetName)'
+            deployableName: 'Production_1'
+          continueOnError: true    
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
+          name: getSnapshottask
+          displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
+          inputs:
+            deployableName: 'Production_1'
+            script: |
+                    let varsnapshot = $(getSnapshot.snapshotObjects);
+                    let vardeployableName = process.argv[2];
+                    let size = varsnapshot.result.length;
+                    for(let i=0; i<size ;i++)
+                    {
+                      let obj = varsnapshot.result[i];
+                      if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
+                        console.log(obj["name"]);
+                    }            
+          continueOnError: true
+          condition: ne(variables['getSnapshot.snapshotObjects'],'')
+        - task: ServiceNow-DevOps-Config-Agent-Validate-Snapshot@1
+          name: 'ValidateSnapshot'
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: 'Boutique'
+            deployableName: 'Production_1'
+            snapshotName: $(getSnapshottask.snapshotName)
+            showResults: true
+          continueOnError: true
+          condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshottask.snapshotName'],''))
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+          name: getSnapshotaftervalidation
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: 'Boutique'
+            changesetNumber: '$(varChSetName)'
+            deployableName: 'Production_1'
+          continueOnError: true
+          condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshottask.snapshotName'],''))
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
+          name: getSnapshottaskAfterValidation
+          displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
+          inputs:
+            deployableName: 'Production_1'
+            script: |
+                    let varsnapshot = $(getSnapshotaftervalidation.snapshotObjects);
+                    let vardeployableName = process.argv[2];
+                    let size = varsnapshot.result.length;
+                    for(let i=0; i<size ;i++)
+                    {
+                      let obj = varsnapshot.result[i];
+                      if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
+                        console.log(obj["validation"]);
+                    }            
+          continueOnError: true
+          condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshotaftervalidation.snapshotObjects'],''))
+        - task: ServiceNow-DevOps-Config-Agent-Publish-Snapshot@1
+          displayName: 'ServiceNow DevOps Config Agent Publish Snapshot'
+          name: ValidationPassed
+          condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshottaskAfterValidation.snapshotName'],''),ne(variables['getSnapshottaskAfterValidation.snapshotName'],'failed'))
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: Boutique
+            deployableName: 'Production_1'
+            snapshotName: $(getSnapshottask.snapshotName)
+        - script: |
+            exit 1
+          condition: and(eq(variables['getSnapshottaskAfterValidation.snapshotName'],'failed'),ne(variables['getSnapshottask.snapshotName'],''))
+          continueOnError: true 
+  ##############################################################################
+  ###                       SERVICENOW Register Snapshot                     ###
+  ##############################################################################            
+  - stage: register_snapshot
+    dependsOn: 
+      - DevOPs_Config_Upload
+      - DevOPs_Config_validate
+    variables: 
+      varSnapShot: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottask.snapshotName']]
+      varChngNR: $[stageDependencies.DevOPs_Config_Upload.Upload.outputs['changeset.chngnumber']]
+      ValidationPassed: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottaskAfterValidation.snapshotName']]
+    jobs:
+      - job: Register_Snapshot_agentless
+        steps:
+        - script: exit 1
+          condition: and(eq(variables['ValidationPassed'],'failed'),ne(variables['varSnapShot'],''))
+        - script: echo $(varChngNR)
+        - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
+          condition: and(eq(variables['ValidationPassed'],'passed'),ne(variables['varSnapShot'],''))
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: 'Boutique'
+            snapshotName: $(varSnapShot)
+        - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
+          condition: eq(variables['varSnapShot'],'')
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            applicationName: 'Boutique'
+            changesetNumber: $(varChngNR)              
   ##############################################################################
   ###               BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                ###
   ##############################################################################
@@ -93,11 +208,15 @@ stages:
               docker build -t $IMAGE . && docker push $IMAGE   
             fi
           displayName: 'Building Image'
-
   ##############################################################################
   ###                       SERVICENOW DEVOPS CHANGE                         ###
   ##############################################################################
   - stage: DevOps_Change
+    variables:
+      ${{ if eq(parameters.serviceName, 'redis') }}:
+        service: 'redis-cart'
+      ${{ else }}:
+        service: $(serviceName)
     jobs:
       - job: DevOps_Change
         pool: server
@@ -125,12 +244,14 @@ stages:
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            snapshotName: $(varSnapShot)
+            applicationName: 'Boutique'            
             changeRequestDetails: |
               {
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "$(serviceName)"
+                     "name": "$(service)"
                   },
                   "business_service": {
                      "name" : "Boutique_MS"
