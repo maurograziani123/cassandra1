@@ -213,7 +213,7 @@ stages:
   ##############################################################################
   - stage: DevOps_Change
     variables:
-      ${{ if eq($(serviceName), 'redis') }}:
+      ${{ if eq(variables['serviceName'], 'redis') }}:
         service: 'redis-cart'
       ${{ else }}:
         service: $(serviceName)
