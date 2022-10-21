@@ -43,7 +43,28 @@ stages:
             searchFolder: '$(System.DefaultWorkingDirectory)/tests/$(serviceName)'
             testRunTitle: '$(serviceName)-1.0.$(build.buildId)-tests'
           displayName: 'Publishing Results'
-
+  ##############################################################################
+  ###                                 Upload data to DevOPs Conf             ###
+  ##############################################################################
+  - stage: DevOPs_Config_Upload
+    jobs:
+      - job: Upload
+        steps:
+        - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+          name: 'Uploadconfig'
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            configFile: 'kubernetes-manifests/$serviceName.yaml'
+            #configFile: 'limits.conf'
+            applicationName: 'Boutique'
+            uploadTarget: 'component'
+            namePath: '$serviceName/$serviceName.yaml'
+            dataFormat: 'yaml'
+            #changesetNumber: null
+            autoCommit: true
+            autoValidate: true        
+        - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
+          name: changeset  
   ##############################################################################
   ###               BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                ###
   ##############################################################################
