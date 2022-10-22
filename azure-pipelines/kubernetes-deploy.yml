@@ -256,8 +256,6 @@ stages:
         varSnapshotChange: $(varSnapShot2)
       ${{ if eq(variables.service, 'redis') }}:
          service: 'redis-cart'
-      ${{ if ne(variables.service, 'redis') }}:
-         service: $(serviceName)
     jobs:
       - job: DevOps_Change
         pool: server
