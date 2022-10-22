@@ -58,7 +58,7 @@ stages:
             #configFile: 'limits.conf'
             applicationName: 'Boutique'
             uploadTarget: 'component'
-            namePath: '$(serviceName)'
+            namePath: '$(serviceName)/$(serviceName).yaml'
             dataFormat: 'yaml'
             #changesetNumber: null
             autoCommit: true
