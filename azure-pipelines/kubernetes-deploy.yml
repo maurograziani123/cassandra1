@@ -298,14 +298,14 @@ stages:
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
-            snapshotName: $(setSnapshotForChange.varSnapshotChange)
+            snapshotName: $(varSnapshotChange)
             applicationName: 'Boutique'            
             changeRequestDetails: |
               {
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "$(setService.service)"
+                     "name": "$(service)"
                   },
                   "business_service": {
                      "name" : "Boutique_MS"
