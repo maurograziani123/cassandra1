@@ -58,7 +58,7 @@ stages:
             #configFile: 'limits.conf'
             applicationName: 'Boutique'
             uploadTarget: 'component'
-            namePath: '$(serviceName)/$(serviceName).yaml'
+            namePath: '$(serviceName)'
             dataFormat: 'yaml'
             #changesetNumber: null
             autoCommit: true
@@ -135,8 +135,7 @@ stages:
                       let obj = varsnapshot.result[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
                       {
-                        console.log(obj["deployable_id.name"]);
-                        console.log(obj["validation"]);
+                        console.log(obj["name"]);
                       }
                     }            
           continueOnError: true
