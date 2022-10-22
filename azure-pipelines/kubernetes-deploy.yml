@@ -174,12 +174,37 @@ stages:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
             snapshotName: $(varSnapShot)
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
+          condition: eq(variables['varSnapShot'],'')
+          name: getLatestSnapshotWhenNoChange
+          inputs:
+            connectedServiceName: 'MyServiceNowInstance'
+            applicationName: 'Boutique'
+            deployableName: 'Production_1'
+            isValidated: 'true'
+        - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
+          name: snapshotNameFromLatestSnapshot
+          displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
+          inputs:
+            deployableName: 'Production_1'
+            script: |
+                    let varsnapshot = $(getLatestSnapshotWhenNoChange.snapshotObjects);
+                    let vardeployableName = process.argv[2];
+                    let size = varsnapshot.result.length;
+                    for(let i=0; i<size ;i++)
+                    {
+                      let obj = varsnapshot.result[i];
+                      if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
+                        console.log(obj["validation"]);
+                    }            
+          continueOnError: true
+          condition: eq(variables['varSnapShot'],'')
         - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
           condition: eq(variables['varSnapShot'],'')
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
-            changesetNumber: $(varChngNR)              
+            snapshotName: $(snapshotNameFromLatestSnapshot.snapshotName)              
   ##############################################################################
   ###               BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                ###
   ##############################################################################
@@ -212,15 +237,28 @@ stages:
   ###                       SERVICENOW DEVOPS CHANGE                         ###
   ##############################################################################
   - stage: DevOps_Change
+    dependsOn: 
+      - DevOPs_Config_Upload
+      - DevOPs_Config_validate
+      - register_snapshot  
     variables:
-      ${{ if eq(variables['serviceName'], 'redis') }}:
-        service: 'redis-cart'
+      varSnapShot1: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottask.snapshotName']]
+      varSnapShot2: $[stageDependencies.register_snapshot.Register_Snapshot_agentless.outputs['snapshotNameFromLatestSnapshot.snapshotName']]
+      ${{ if eq(variables.varSnapShot1, '') }}:
+        varSnapshotChange: varSnapShot2
       ${{ else }}:
-        service: $(serviceName)
+        varSnapshotChange: varSnapShot2
+      ${{ if eq(variables.serviceName, 'redis') }}:
+         service: 'redis-cart'
+      ${{ if ne(variables.serviceName, 'redis') }}:
+         service: $(serviceName)
     jobs:
       - job: DevOps_Change
         pool: server
         steps:
+        - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
+          condition: eq(variables['varSnapShot'],'')
+          name: changeset          
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
@@ -244,7 +282,7 @@ stages:
         - task: ServiceNow-DevOps-Server-Change-Acceleration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
-            snapshotName: $(varSnapShot)
+            snapshotName: $(varSnapshotChange)
             applicationName: 'Boutique'            
             changeRequestDetails: |
               {
