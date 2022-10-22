@@ -199,6 +199,7 @@ stages:
                     }            
           continueOnError: true
           condition: eq(variables['varSnapShot'],'')
+        - script: echo $(snapshotNameFromLatestSnapshot.snapshotName)  
         - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
           condition: eq(variables['varSnapShot'],'')
           inputs:
