@@ -129,12 +129,15 @@ stages:
             script: |
                     let varsnapshot = $(getSnapshotaftervalidation.snapshotObjects);
                     let vardeployableName = process.argv[2];
-                    let size = varsnapshot.result.length;
+                    let size = varsnapshot.length;
                     for(let i=0; i<size ;i++)
                     {
-                      let obj = varsnapshot.result[i];
+                      let obj = varsnapshot[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
+                      {
+                        console.log(obj["deployable_id.name"]);
                         console.log(obj["validation"]);
+                      }
                     }            
           continueOnError: true
           condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshotaftervalidation.snapshotObjects'],''))
