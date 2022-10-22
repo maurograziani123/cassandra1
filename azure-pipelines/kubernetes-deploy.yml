@@ -253,7 +253,7 @@ stages:
       - job: setVariables
         steps:
         - bash: |
-            if [ $(varSnapShot1) == "" ]
+            if [ -z $(varSnapShot1) ]
             then
               echo "##vso[task.setvariable variable=varSnapshotChange;isoutput=true]$(varSnapShot2)"
             else
