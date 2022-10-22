@@ -256,9 +256,6 @@ stages:
       - job: DevOps_Change
         pool: server
         steps:
-        - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
-          condition: eq(variables['varSnapShot'],'')
-          name: changeset          
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
