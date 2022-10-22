@@ -253,7 +253,7 @@ stages:
       - job: setVariables
         steps:
         - bash: |
-            if [ $(varSnapShot1) -eq "" ]
+            if [ $(varSnapShot1) == "" ]
             then
               echo "##vso[task.setvariable variable=varSnapshotChange;isoutput=true]$(varSnapShot2)"
             else
@@ -261,7 +261,7 @@ stages:
             fi      
           name:  setSnapshotForChange
         - bash: |
-            if [ $(serviceName) -eq "redis" ]
+            if [ $(serviceName) == "redis" ]
             then
               echo "##vso[task.setvariable variable=service;isoutput=true]redit-cart"
             else
