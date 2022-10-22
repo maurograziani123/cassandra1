@@ -182,6 +182,7 @@ stages:
             applicationName: 'Boutique'
             deployableName: 'Production_1'
             isValidated: 'true'
+        - script: echo $(snapshotNameFromLatestSnapshot.snapshotObjects)              
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
           name: snapshotNameFromLatestSnapshot
           displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
@@ -199,7 +200,6 @@ stages:
                     }            
           continueOnError: true
           condition: eq(variables['varSnapShot'],'')
-        - script: echo $(snapshotNameFromLatestSnapshot.snapshotName)  
         - task: ServiceNow-DevOps-Config-Agent-Register-Pipeline@1
           condition: eq(variables['varSnapShot'],'')
           inputs:
