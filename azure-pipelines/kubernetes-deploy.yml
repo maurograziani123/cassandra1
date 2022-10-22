@@ -182,7 +182,7 @@ stages:
             applicationName: 'Boutique'
             deployableName: 'Production_1'
             isValidated: 'true'
-        - script: echo $(snapshotNameFromLatestSnapshot.snapshotObjects)              
+        - script: echo $(getLatestSnapshotWhenNoChange.snapshotObjects)              
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
           name: snapshotNameFromLatestSnapshot
           displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
