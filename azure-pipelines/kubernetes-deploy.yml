@@ -129,10 +129,10 @@ stages:
             script: |
                     let varsnapshot = $(getSnapshotaftervalidation.snapshotObjects);
                     let vardeployableName = process.argv[2];
-                    let size = varsnapshot.length;
+                    let size = varsnapshot.result.length;
                     for(let i=0; i<size ;i++)
                     {
-                      let obj = varsnapshot[i];
+                      let obj = varsnapshot.result[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
                       {
                         console.log(obj["deployable_id.name"]);
@@ -194,10 +194,10 @@ stages:
             script: |
                     let varsnapshot = $(getLatestSnapshotWhenNoChange.snapshotObjects);
                     let vardeployableName = process.argv[2];
-                    let size = varsnapshot.result.length;
+                    let size = varsnapshot.length;
                     for(let i=0; i<size ;i++)
                     {
-                      let obj = varsnapshot.result[i];
+                      let obj = varsnapshot[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
                         console.log(obj["validation"]);
                     }            
