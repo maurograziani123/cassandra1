@@ -251,7 +251,6 @@ stages:
       varSnapShot2: $[stageDependencies.register_snapshot.Register_Snapshot_agentless.outputs['snapshotNameFromLatestSnapshot.snapshotName']]
     jobs:
       - job: setVariables
-        pool: agent
         steps:
         - bash: |
             if ($varSnapShot1) eq '') {
