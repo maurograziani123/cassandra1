@@ -241,6 +241,7 @@ stages:
       - DevOPs_Config_Upload
       - DevOPs_Config_validate
       - register_snapshot  
+      - Build_Image
     variables:
       varSnapShot1: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottask.snapshotName']]
       varSnapShot2: $[stageDependencies.register_snapshot.Register_Snapshot_agentless.outputs['snapshotNameFromLatestSnapshot.snapshotName']]
