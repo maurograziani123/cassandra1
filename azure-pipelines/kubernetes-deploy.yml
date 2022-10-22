@@ -260,7 +260,7 @@ stages:
             }      
           name:  setSnapshotForChange
         - bash: |
-            if ($(serivceName) eq 'redis') {
+            if ($(serviceName) eq 'redis') {
               echo "##vso[task.setvariable variable=service;isoutput=true]redit-cart"
             } else {
               echo "##vso[task.setvariable variable=service;isoutput=true]$(serviceName)"
