@@ -199,6 +199,7 @@ stages:
                     {
                       let obj = varsnapshot[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
+                        console.log(obj["deployable_id.name"]);
                         console.log(obj["validation"]);
                     }            
           continueOnError: true
@@ -207,7 +208,7 @@ stages:
           condition: eq(variables['varSnapShot'],'')
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
-            applicationName: 'Boutique'
+            applicationName: 'frontend'
             snapshotName: $(snapshotNameFromLatestSnapshot.snapshotName)              
   ##############################################################################
   ###               BUILD DOCKER IMAGE AND PUSH TO DOCKER HUB                ###
