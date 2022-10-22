@@ -250,8 +250,8 @@ stages:
       varSnapShot1: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottask.snapshotName']]
       varSnapShot2: $[stageDependencies.register_snapshot.Register_Snapshot_agentless.outputs['snapshotNameFromLatestSnapshot.snapshotName']]
     jobs:
-      - job: DevOps_Change
-        pool: server
+      - job: setVariables
+        pool: agent
         steps:
         - bash: |
             if ($varSnapShot1) eq '') {
@@ -267,6 +267,13 @@ stages:
               echo "##vso[task.setvariable variable=service;isoutput=true]$(serviceName)"
             }      
           name:  setService  
+      - job: DevOps_Change
+        dependsOn: setVariables
+        variables: 
+          varSnapshotChange: $[ dependencies.setVariables.outputs['setSnapshotForChange.varSnapshotChange'] ]
+          service: $[ dependencies.setVariables.outputs['setService.service'] ]
+        pool: server
+        steps:          
         - task: ServiceNow-DevOps-Server-Artifact-Registration@1
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
