@@ -178,7 +178,7 @@ stages:
           condition: eq(variables['varSnapShot'],'')
           name: getLatestSnapshotWhenNoChange
           inputs:
-            connectedServiceName: 'MyServiceNowInstance'
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
             deployableName: 'Production_1'
             isValidated: 'true'
