@@ -249,13 +249,15 @@ stages:
     variables:
       varSnapShot1: $[stageDependencies.DevOPs_Config_validate.validate.outputs['getSnapshottask.snapshotName']]
       varSnapShot2: $[stageDependencies.register_snapshot.Register_Snapshot_agentless.outputs['snapshotNameFromLatestSnapshot.snapshotName']]
-      service: $(serviceName)
       ${{ if eq(variables.varSnapShot1, '') }}:
         varSnapshotChange: $(varSnapShot2)
       ${{ else }}:
-        varSnapshotChange: $(varSnapShot2)
+        varSnapshotChange: $(varSnapShot1)
+      service: $(serviceName)
       ${{ if eq(variables.service, 'redis') }}:
-         service: 'redis-cart'
+         servicechange: 'redis-cart'
+      ${{ if ne(variables.service, 'redis') }}:
+         servicechange: $(service)       
     jobs:
       - job: DevOps_Change
         pool: server
