@@ -37,7 +37,7 @@ spec:
         livenessProbe:
           periodSeconds: 5
           tcpSocket:
-            port: 6378
+            port: 6379
         volumeMounts:
         - mountPath: /data
           name: redis-data
