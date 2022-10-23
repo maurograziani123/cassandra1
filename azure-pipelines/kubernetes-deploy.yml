@@ -276,7 +276,7 @@ stages:
         - bash: |
             if [ $(serviceName) == "redis" ]
             then
-              echo "##vso[task.setvariable variable=service;isoutput=true]redis-cart"
+              echo "##vso[task.setvariable variable=service;isoutput=true]redis-cart-service"
             else
               echo "##vso[task.setvariable variable=service;isoutput=true]$(serviceName)"
             fi   
