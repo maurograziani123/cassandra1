@@ -346,8 +346,10 @@ stages:
                cd src/$(serviceName) 
                # Substitute
                envsubst < ../../kubernetes-manifests/$(serviceName).yaml > ../../kubernetes-manifests/$(serviceName).subst
+               envsubst < ../../kubernetes-manifests/$(serviceName)-service.yaml > ../../kubernetes-manifests/$(serviceName)-service.subst
             else
                cat kubernetes-manifests/$(serviceName).yaml > kubernetes-manifests/$(serviceName).subst     
+               cat kubernetes-manifests/$(serviceName)-service.yaml > kubernetes-manifests/$(serviceName)-service.subst     
             fi
           displayName: 'Prepping Yaml'        
         - task: Kubernetes@1
@@ -358,3 +360,11 @@ stages:
             namespace: $(serviceNamespace)
             command: 'apply'
             arguments: '-f kubernetes-manifests/$(serviceName).subst'
+        - task: Kubernetes@1
+          displayName: 'Deploying $(serviceName) Image..'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus'
+            namespace: $(serviceNamespace)
+            command: 'apply'
+            arguments: '-f kubernetes-manifests/$(serviceName)-service.subst'            
