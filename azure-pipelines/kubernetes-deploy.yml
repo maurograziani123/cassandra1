@@ -97,13 +97,13 @@ stages:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
             changesetNumber: '$(varChSetName)'
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
           continueOnError: true    
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
           name: getSnapshottask
           displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
           inputs:
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             script: |
                     let varsnapshot = $(getSnapshot.snapshotObjects);
                     let vardeployableName = process.argv[2];
@@ -121,7 +121,7 @@ stages:
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             snapshotName: $(getSnapshottask.snapshotName)
             showResults: true
           continueOnError: true
@@ -132,14 +132,14 @@ stages:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
             changesetNumber: '$(varChSetName)'
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
           continueOnError: true
           condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshottask.snapshotName'],''))
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
           name: getSnapshottaskAfterValidation
           displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
           inputs:
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             script: |
                     let varsnapshot = $(getSnapshotaftervalidation.snapshotObjects);
                     let vardeployableName = process.argv[2];
@@ -161,7 +161,7 @@ stages:
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: Boutique
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             snapshotName: $(getSnapshottask.snapshotName)
         - script: |
             exit 1
@@ -196,14 +196,14 @@ stages:
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             isValidated: 'true'
         - script: echo $(getLatestSnapshotWhenNoChange.snapshotObjects)              
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
           name: snapshotNameFromLatestSnapshot
           displayName: 'ServiceNow DevOps Config Agent Get Snapshot Name'
           inputs:
-            deployableName: 'Production_1'
+            deployableName: 'Production_$(serviceName)'
             script: |
                     let varsnapshot = $(getLatestSnapshotWhenNoChange.snapshotObjects);
                     let vardeployableName = process.argv[2];
