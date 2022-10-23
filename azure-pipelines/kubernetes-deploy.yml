@@ -74,7 +74,7 @@ stages:
             namePath: '$(serviceName)'
             dataFormat: 'yaml'
             #changesetNumber: null
-            changesetNumber:
+            changesetNumber: '$(Uploadconfig.changesetNumber)'
             autoCommit: true
             autoValidate: true              
         - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
