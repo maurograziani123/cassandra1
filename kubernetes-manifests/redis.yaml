@@ -51,16 +51,3 @@ spec:
       volumes:
       - name: redis-data
         emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-cart
-spec:
-  type: ClusterIP
-  selector:
-    app: redis-cart
-  ports:
-  - name: redis
-    port: 6378
-    targetPort: 6379
