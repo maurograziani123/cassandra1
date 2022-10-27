@@ -65,7 +65,7 @@ stages:
   ###                                 Upload data to DevOPs Conf             ###
   ##############################################################################
   - stage: DevOPs_Config_Upload
-    variable: 
+    variables: 
       service: $(serviceName)
     jobs:
       - job: Upload
