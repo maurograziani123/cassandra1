@@ -24,8 +24,11 @@ stages:
   ###                                 Build Image Stage                      ###
   ##############################################################################
   - stage: Build_Image_before_test
+    variables: 
+      service: $(serviceName)  
     jobs:
       - job: Build_Image_before_test
+        condition: eq(variables['service'],'loadgenerator')      
         steps:
         - bash: |
             set -x # Echo Commands
