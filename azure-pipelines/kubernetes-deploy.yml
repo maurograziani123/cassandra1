@@ -65,11 +65,28 @@ stages:
   ###                                 Upload data to DevOPs Conf             ###
   ##############################################################################
   - stage: DevOPs_Config_Upload
+    variable: 
+      service: $(serviceName)
     jobs:
       - job: Upload
         steps:
         - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
+          name: 'UploadconfigLoadGenerator'
+          condition: eq(variables['service'],'loadgenerator')
+          inputs:
+            connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
+            configFile: 'kubernetes-manifests/$(serviceName).yaml'
+            #configFile: 'limits.conf'
+            applicationName: 'Boutique'
+            uploadTarget: 'component'
+            namePath: '$(serviceName)'
+            dataFormat: 'yaml'
+            #changesetNumber: null
+            autoCommit: true
+            autoValidate: true           
+        - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
           name: 'Uploadconfig'
+          condition: ne(variables['service'],'loadgenerator')
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             configFile: 'kubernetes-manifests/$(serviceName).yaml'
@@ -83,6 +100,7 @@ stages:
             autoValidate: false      
         - task: ServiceNow-DevOps-Config-Agent-Upload-Config@1
           name: 'UploadconfigService'
+          condition: ne(variables['service'],'loadgenerator')
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             configFile: 'kubernetes-manifests/$(serviceName)-service.yaml'
@@ -351,6 +369,8 @@ stages:
   ###                      DEPLOY IMAGE TO KUBERNETES                        ###
   ##############################################################################
   - stage: Deploy_Image
+    variables: 
+      service: $(serviceName)
     jobs:
       - job: Deploy_Image
         steps:
@@ -367,7 +387,10 @@ stages:
                envsubst < ../../kubernetes-manifests/$(serviceName)-service.yaml > ../../kubernetes-manifests/$(serviceName)-service.subst
             else
                cat kubernetes-manifests/$(serviceName).yaml > kubernetes-manifests/$(serviceName).subst     
-               cat kubernetes-manifests/$(serviceName)-service.yaml > kubernetes-manifests/$(serviceName)-service.subst     
+               if [ $(serviceName) != "loadgenerator" ]
+               then
+                 cat kubernetes-manifests/$(serviceName)-service.yaml > kubernetes-manifests/$(serviceName)-service.subst     
+               fi
             fi
           displayName: 'Prepping Yaml'        
         - task: Kubernetes@1
@@ -380,6 +403,7 @@ stages:
             arguments: '-f kubernetes-manifests/$(serviceName).subst'
         - task: Kubernetes@1
           displayName: 'Deploying $(serviceName) Image..'
+          condition: ne(variables['service'],'loadgenerator')
           inputs:
             connectionType: 'Kubernetes Service Connection'
             kubernetesServiceEndpoint: 'olympus'
