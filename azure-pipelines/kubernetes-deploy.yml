@@ -175,7 +175,7 @@ stages:
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
-            changesetNumber: '$(varChSetName)'
+            changesetNumber: '$(varChSetName1)$(varChSetName2)'
             deployableName: 'Production_$(serviceName)'
           continueOnError: true
           condition: and(ne(variables['getSnapshot.snapshotObjects'],''),ne(variables['getSnapshottask.snapshotName'],''))
