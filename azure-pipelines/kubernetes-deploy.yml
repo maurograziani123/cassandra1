@@ -34,6 +34,7 @@ stages:
             # Change Dir
             cd hack/          
             chmod 744 make-docker-image.sh
+            ls -ltr
             # Build All Images
             REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-image.sh $(serviceName)
           displayName: 'Building $(serviceName) Image'
