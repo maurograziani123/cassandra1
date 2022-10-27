@@ -21,6 +21,22 @@ pool:
 stages:
 
   ##############################################################################
+  ###                                 Build Image Stage                      ###
+  ##############################################################################
+  - stage: Build_Image
+    jobs:
+      - job: Build_Image
+        steps:
+        - bash: |
+            set -x # Echo Commands
+            # Docker Login
+            echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin
+            # Change Dir
+            cd hack/            
+            # Build All Images
+            REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-image.sh $(serviceName)
+          displayName: 'Building $(serviceName) Image'
+  ##############################################################################
   ###                                 RUN TESTS                              ###
   ##############################################################################
   - stage: Run_Tests
