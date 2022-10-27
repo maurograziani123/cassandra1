@@ -114,7 +114,11 @@ stages:
             autoCommit: true
             autoValidate: true              
         - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(Uploadconfig.changesetNumber)" 
+          condition: ne(variables['service'],'loadgenerator')
           name: changeset  
+        - script: echo "##vso[task.setvariable variable=chngnumber;isOutput=true]$(UploadconfigLoadGenerator.changesetNumber)" 
+          condition: eq(variables['service'],'loadgenerator')        
+          name: changeset1          
 ##############################################################################
   ###                                Validate uploaded data.                ###
   ##############################################################################
@@ -122,7 +126,8 @@ stages:
     dependsOn: DevOPs_Config_Upload
     condition: in(dependencies.DevOPs_Config_Upload.result, 'Succeeded')
     variables:
-      varChSetName: $[stageDependencies.DevOPs_Config_Upload.Upload.outputs['changeset.chngnumber']]
+      varChSetName1: $[stageDependencies.DevOPs_Config_Upload.Upload.outputs['changeset.chngnumber']]
+      varChSetName2: $[stageDependencies.DevOPs_Config_Upload.Upload.outputs['changeset1.chngnumber']]
     jobs:
       - job: validate
         steps:
@@ -132,7 +137,7 @@ stages:
           inputs:
             connectedServiceName: 'loomsalesdemoforschweiz1-CloudNative-ServiceNow DevOps Service Connection'
             applicationName: 'Boutique'
-            changesetNumber: '$(varChSetName)'
+            changesetNumber: '$(varChSetName1)$(varChSetName2)'
             deployableName: 'Production_$(serviceName)'
           continueOnError: true    
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot-Name@1
