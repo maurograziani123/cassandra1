@@ -23,9 +23,9 @@ stages:
   ##############################################################################
   ###                                 Build Image Stage                      ###
   ##############################################################################
-  - stage: Build_Image
+  - stage: Build_Image_before_test
     jobs:
-      - job: Build_Image
+      - job: Build_Image_before_test
         steps:
         - bash: |
             set -x # Echo Commands
