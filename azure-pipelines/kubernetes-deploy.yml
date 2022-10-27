@@ -32,7 +32,8 @@ stages:
             # Docker Login
             echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin
             # Change Dir
-            cd hack/            
+            cd hack/          
+            ls  
             # Build All Images
             REPO_PREFIX=$(repoPrefix) TAG=latest ./make-docker-image.sh $(serviceName)
           displayName: 'Building $(serviceName) Image'
