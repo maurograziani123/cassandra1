@@ -69,11 +69,11 @@ class UserBehavior(TaskSet):
     def on_start(self):
         index(self)
 
-    tasks = {index: 1,
+    tasks = {index: 100,
         setCurrency: 5,
-        browseProduct: 15,
+        browseProduct: 50,
         addToCart: 10,
-        viewCart: 10,
+        viewCart: 30,
         checkout: 1}
 
 class WebsiteUser(HttpUser):
