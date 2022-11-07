@@ -134,7 +134,7 @@ stages:
     jobs:
       - job: validate
         steps:
-        - script: echo $(varChSetName)
+        - script: echo $(varChSetName1)$(varChSetName2)
         - task: ServiceNow-DevOps-Config-Agent-Get-Snapshot@1
           name: getSnapshot
           inputs:
@@ -251,7 +251,7 @@ stages:
             script: |
                     let varsnapshot = $(getLatestSnapshotWhenNoChange.snapshotObjects);
                     let vardeployableName = process.argv[2];
-                    let size = varsnapshot.length;
+                    let size = varsnapshot.result.length;
                     for(let i=0; i<size ;i++)
                     {
                       let obj = varsnapshot[i];
