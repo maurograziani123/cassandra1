@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using cartservice.cartstore;
 using cartservice.services;
 using OpenTelemetry.Trace;
+using System.Diagnostics;
 
 namespace cartservice
 {
@@ -45,7 +46,11 @@ namespace cartservice
                 .AddRedisInstrumentation(
                     cartStore.GetConnection(),
                     options => options.SetVerboseDatabaseStatements = true)
-                .AddAspNetCoreInstrumentation()
+                .AddAspNetCoreInstrumentation( options =>
+                    {
+                        options.Enrich = Enrich;
+                        options.RecordException = true;
+                    })
                 .AddGrpcClientInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddOtlpExporter());
@@ -54,6 +59,22 @@ namespace cartservice
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        private static void Enrich(Activity activity, string eventName, object obj)
+        {
+            if (obj is HttpRequest request)
+            {
+                var context = request.HttpContext;
+                activity.AddTag("http.scheme", request.Scheme);
+                activity.AddTag("http.client_ip", context.Connection.RemoteIpAddress);
+                activity.AddTag("http.request_content_length", request.ContentLength);
+                activity.AddTag("http.request_content_type", request.ContentType);
+            }
+            else if (obj is HttpResponse response)
+            {
+                activity.AddTag("http.response_content_length", response.ContentLength);
+                activity.AddTag("http.response_content_type", response.ContentType);
+            }
+        }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
