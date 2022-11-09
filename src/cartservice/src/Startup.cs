@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Resources;
 using cartservice.cartstore;
 using cartservice.services;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace cartservice
 {
@@ -24,7 +26,9 @@ namespace cartservice
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
-        {                
+        {         
+
+                
             string redisAddress = Configuration["REDIS_ADDR"];
             RedisCartStore cartStore = null;
             if (string.IsNullOrEmpty(redisAddress))
@@ -36,6 +40,14 @@ namespace cartservice
             }
             cartStore = new RedisCartStore(redisAddress);
 
+            var resourceBuilder = ResourceBuilder
+                .CreateDefault()
+                .AddService("cartservice")
+                .AddAttributes(new Dictionary<string, object> {
+                    { "redis", redisAddress}
+                })
+                .AddTelemetrySdk();  
+
             // Initialize the redis store
             cartStore.InitializeAsync().GetAwaiter().GetResult();
             Console.WriteLine("Initialization completed");
@@ -46,13 +58,11 @@ namespace cartservice
                 .AddRedisInstrumentation(
                     cartStore.GetConnection(),
                     options => options.SetVerboseDatabaseStatements = true)
-                .AddAspNetCoreInstrumentation( options =>
-                    {
-                        options.Enrich = Enrich;
-                        options.RecordException = true;
-                    })
+                .AddAspNetCoreInstrumentation()
                 .AddGrpcClientInstrumentation()
                 .AddHttpClientInstrumentation()
+                .SetResourceBuilder(resourceBuilder)
+                .AddSource("cartservice)")
                 .AddOtlpExporter());
 
             services.AddGrpc();
@@ -65,10 +75,7 @@ namespace cartservice
             if (obj is HttpRequest request)
             {
                 var context = request.HttpContext;
-                activity.AddTag("http.scheme", request.Scheme);
                 activity.AddTag("http.client_ip", context.Connection.RemoteIpAddress);
-                activity.AddTag("http.request_content_length", request.ContentLength);
-                activity.AddTag("http.request_content_type", request.ContentType);
             }
             else if (obj is HttpResponse response)
             {
