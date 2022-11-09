@@ -68,21 +68,6 @@ namespace cartservice
             services.AddGrpc();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        private static void Enrich(Activity activity, string eventName, object obj)
-        {
-            Console.WriteLine("Enrich : " + eventName);
-            if (obj is HttpRequest request)
-            {
-                var context = request.HttpContext;
-                activity.AddTag("http.client_ip", context.Connection.RemoteIpAddress);
-            }
-            else if (obj is HttpResponse response)
-            {
-                activity.AddTag("http.response_content_length", response.ContentLength);
-                activity.AddTag("http.response_content_type", response.ContentType);
-            }
-        }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
