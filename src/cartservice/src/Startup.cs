@@ -61,6 +61,7 @@ namespace cartservice
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         private static void Enrich(Activity activity, string eventName, object obj)
         {
+            Console.WriteLine("Enrich : " + eventName);
             if (obj is HttpRequest request)
             {
                 var context = request.HttpContext;
