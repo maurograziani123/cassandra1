@@ -21,27 +21,6 @@ pool:
 stages:
 
   ##############################################################################
-  ###                                 Build Image Stage                      ###
-  ##############################################################################
-  - stage: Build_Image_before_test
-    variables: 
-      service: $(serviceName)  
-    jobs:
-      - job: Build_Image_before_test
-        condition: eq(variables['service'],'loadgenerator')      
-        steps:
-        - bash: |
-            set -x # Echo Commands
-            # Docker Login
-            echo $(repoPAT) | docker login --username $(repoUserName) --password-stdin
-            # Change Dir
-            cd hack/          
-            chmod 744 make_docker_image.sh
-            ls -ltr
-            # Build All Images
-            REPO_PREFIX=$(repoPrefix) TAG=latest ./make_docker_image.sh $(serviceName)
-          displayName: 'Building $(serviceName) Image'
-  ##############################################################################
   ###                                 RUN TESTS                              ###
   ##############################################################################
   - stage: Run_Tests
