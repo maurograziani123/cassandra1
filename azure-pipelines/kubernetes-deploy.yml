@@ -193,7 +193,7 @@ stages:
                       let obj = varsnapshot.result[i];
                       if(obj["deployable_id.name"].toLowerCase() == vardeployableName.toLowerCase())
                       {
-                        console.log(obj["validation"]);
+                        console.log(obj["name"]);
                       }
                     }            
           continueOnError: true
