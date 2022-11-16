@@ -70,12 +70,12 @@ class UserBehavior(TaskSet):
         index(self)
 
     tasks = {index: 10,
-        setCurrency: 5,
-        browseProduct: 15,
+        setCurrency: 4,
+        browseProduct: 10,
         addToCart: 10,
-        viewCart: 15,
+        viewCart: 10,
         checkout: 10}
 
 class WebsiteUser(HttpUser):
     tasks = [UserBehavior]
-    wait_time = between(1, 5)
+    wait_time = between(5, 10)
