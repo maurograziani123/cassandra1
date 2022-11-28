@@ -16,6 +16,10 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using cartservice.cartstore;
 using Hipstershop;
+using cartservice;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+using System.Diagnostics;
 
 namespace cartservice.services
 {
@@ -24,6 +28,8 @@ namespace cartservice.services
         private readonly static Empty Empty = new Empty();
         private readonly ICartStore _cartStore;
 
+        private static readonly ActivitySource ActivitySourceCart = new(nameof(CartService));
+
         public CartService(ICartStore cartStore)
         {
             _cartStore = cartStore;
@@ -31,6 +37,9 @@ namespace cartservice.services
 
         public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
         {
+            using var activity = ActivitySourceCart.StartActivity("Add Item");
+            activity?.SetTag("UserId",request.UserId);
+            activity?.SetTag("PorductID",request.Item.ProductId);
             await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
             return Empty;
         }
