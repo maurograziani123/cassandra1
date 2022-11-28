@@ -28,8 +28,6 @@ namespace cartservice.services
         private readonly static Empty Empty = new Empty();
         private readonly ICartStore _cartStore;
 
-        private static readonly ActivitySource ActivitySourceCart = new(nameof(CartService));
-
         public CartService(ICartStore cartStore)
         {
             _cartStore = cartStore;
@@ -37,7 +35,7 @@ namespace cartservice.services
 
         public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
         {
-            using var activity = ActivitySourceCart.StartActivity("Add Item");
+            var activity = Activity.Current;
             activity?.SetTag("UserId",request.UserId);
             activity?.SetTag("PorductID",request.Item.ProductId);
             await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
