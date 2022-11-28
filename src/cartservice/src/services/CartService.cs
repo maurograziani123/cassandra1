@@ -36,8 +36,8 @@ namespace cartservice.services
         public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
         {
             var activity = Activity.Current;
-            activity?.SetTag("UserId",request.UserId);
-            activity?.SetTag("PorductID",request.Item.ProductId);
+            activity?.SetTag("Add Item UserId",request.UserId);
+            activity?.SetTag("Add Item ProductID",request.Item.ProductId);
             await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
             return Empty;
         }
