@@ -39,6 +39,8 @@ namespace cartservice.cartstore
 
         private readonly ConfigurationOptions redisConnectionOptions;
 
+        private static ActivitySource source = new ActivitySource("cartservice");
+
         public RedisCartStore(string redisAddress)
         {
             // Serialize empty cart into byte array.
@@ -128,16 +130,12 @@ namespace cartservice.cartstore
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
-            var tracer = TracerProvider.Default.GetTracer("cartservice");
+            using (Activity activity = source.StartActivity("mySlowFunction"))
+            {
+               mySlowFunction(50);
+            }
 
-            using var span = tracer.StartActiveSpan("mySlowFunction");
-            using var span2 = tracer.StartSpan("mySlowFunction");
-            Console.WriteLine("Paerent SPan: " + span.ParentSpanId);
-            Console.WriteLine("Paerent SPan: " + span2.ParentSpanId + " " + span2.GetType());
-            mySlowFunction(50);
-            span.End();
-            span2.End();
-
+        
             try
             {
                 EnsureRedisConnected();
