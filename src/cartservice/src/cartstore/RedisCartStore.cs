@@ -112,11 +112,19 @@ namespace cartservice.cartstore
                 isRedisConnectionOpened = true;
             }
         }
+        public void mySlowFunction(float baseNumber) {
+	          Console.WriteLine("Error: mySlowFunction start");
+	          double result = 0;	
+	          for (var i = Math.Pow(baseNumber, 7); i >= 0; i--) {		
+		          result += Math.Atan(i) * Math.Tan(i);
+	          };
+	          Console.WriteLine("ERROR : mySlowFunction Finished");
+        }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
-
+            mySlowFunction(1000);
             try
             {
                 EnsureRedisConnected();
