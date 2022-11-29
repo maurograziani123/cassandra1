@@ -38,6 +38,7 @@ namespace cartservice.services
             var activity = Activity.Current;
             activity?.SetTag("Add Item UserId",request.UserId);
             activity?.SetTag("Add Item ProductID",request.Item.ProductId);
+            System.Threading.Thread.Sleep(2000);
             await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
             return Empty;
         }
