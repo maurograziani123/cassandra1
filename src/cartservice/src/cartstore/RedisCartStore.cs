@@ -17,6 +17,7 @@ using OpenTelemetry.Trace;
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
+using System.Diagnostics;
 using StackExchange.Redis;
 using Google.Protobuf;
 
@@ -130,8 +131,12 @@ namespace cartservice.cartstore
             var tracer = TracerProvider.Default.GetTracer("cartservice");
 
             using var span = tracer.StartActiveSpan("mySlowFunction");
+            using var span2 = tracer.StartSpan("mySlowFunction");
+            Console.WriteLine("Paerent SPan: " + span.ParentSpanId);
+            Console.WriteLine("Paerent SPan: " + span2.ParentSpanId + " " + span2.GetType());
             mySlowFunction(50);
             span.End();
+            span2.End();
 
             try
             {
