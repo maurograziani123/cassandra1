@@ -44,11 +44,15 @@ namespace cartservice.services
 
         public override Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
         {
+            var activity = Activity.Current;
+            activity?.SetTag("Get Cart UserId",request.UserId);
             return _cartStore.GetCartAsync(request.UserId);
         }
 
         public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
         {
+            var activity = Activity.Current;
+            activity?.SetTag("Empty Cart UserId",request.UserId);
             await _cartStore.EmptyCartAsync(request.UserId);
             return Empty;
         }

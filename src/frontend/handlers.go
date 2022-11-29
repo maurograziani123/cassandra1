@@ -30,6 +30,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+
 	pb "github.com/GoogleCloudPlatform/microservices-demo/src/frontend/genproto/hipstershop"
 	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/money"
 )
@@ -52,6 +55,7 @@ var (
 var validEnvs = []string{"local", "gcp", "azure", "aws", "onprem", "alibaba"}
 
 func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
+
 	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
 	log.WithField("currency", currentCurrency(r)).Info("home")
 	currencies, err := fe.getCurrencies(r.Context())
@@ -83,6 +87,10 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		ps[i] = productView{p, price}
 	}
+	ctx := context.TODO()
+	span := trace.SpanFromContext(ctx)
+
+	span.SetAttributes(attribute.String("currentcy", currentCurrency(r)))
 
 	// Set ENV_PLATFORM (default to local if not set; use env var if set; otherwise detect GCP, which overrides env)_
 	var env = os.Getenv("ENV_PLATFORM")
@@ -216,6 +224,10 @@ func (fe *frontendServer) addToCartHandler(w http.ResponseWriter, r *http.Reques
 	}
 	log.WithField("product", productID).WithField("quantity", quantity).Debug("adding to cart")
 
+	ctx := context.TODO()
+	span := trace.SpanFromContext(ctx)
+
+	span.SetAttributes(attribute.String("AddCart", productID))
 	p, err := fe.getProduct(r.Context(), productID)
 	if err != nil {
 		renderHTTPError(log, r, w, errors.Wrap(err, "could not retrieve product"), http.StatusInternalServerError)
@@ -321,6 +333,11 @@ func (fe *frontendServer) viewCartHandler(w http.ResponseWriter, r *http.Request
 func (fe *frontendServer) placeOrderHandler(w http.ResponseWriter, r *http.Request) {
 	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
 	log.Debug("placing order")
+
+	ctx := context.TODO()
+	span := trace.SpanFromContext(ctx)
+
+	span.SetAttributes(attribute.String("Email", r.FormValue("email")))
 
 	var (
 		email         = r.FormValue("email")
