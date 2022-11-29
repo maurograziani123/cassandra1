@@ -118,7 +118,7 @@ namespace cartservice.cartstore
         public void mySlowFunction(float baseNumber) {
 	          Console.WriteLine("Error: mySlowFunction start");
 	          double result = 0;	
-	          for (var i = Math.Pow(baseNumber, 7); i >= 0; i--) {		
+	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
 	          Console.WriteLine("ERROR : mySlowFunction Finished");
@@ -130,7 +130,7 @@ namespace cartservice.cartstore
             var tracer = TracerProvider.Default.GetTracer("cartservice");
 
             using var span = tracer.StartActiveSpan("mySlowFunction");
-            mySlowFunction(1000);
+            mySlowFunction(50);
             span.End();
 
             try
