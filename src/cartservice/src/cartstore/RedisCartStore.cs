@@ -122,7 +122,7 @@ namespace cartservice.cartstore
         public void mySlowFunction(float baseNumber) {
             using (Activity activity = MyActivitySource.StartActivity("mySlowFunction"))
             {            
-	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + source.Name, activity.);
+	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + source.Name);
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
