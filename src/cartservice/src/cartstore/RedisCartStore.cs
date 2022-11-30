@@ -120,22 +120,22 @@ namespace cartservice.cartstore
             }
         }
         public void mySlowFunction(float baseNumber) {
+            using (Activity activity = source.StartActivity("mySlowFunction"))
+            {            
 	          Console.Out.WriteLine("ERROR : mySlowFunction started");
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
+            }
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
-            using (Activity activity = source.StartActivity("mySlowFunction"))
-            {
-               mySlowFunction(50);
-            }
 
+            mySlowFunction(50);
         
             try
             {
