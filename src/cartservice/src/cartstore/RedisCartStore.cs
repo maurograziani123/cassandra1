@@ -123,7 +123,6 @@ namespace cartservice.cartstore
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + activity.DisplayName + " " + activity.Id);
-              Console.Out.WriteLine("ERROR : mySlowFunction Type and Parent : " + activity.GetType());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
