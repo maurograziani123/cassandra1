@@ -48,8 +48,11 @@ namespace cartservice.cartstore
 
         public RedisCartStore(string redisAddress,ILoggerFactory loggerFactory = null)
         {
-            _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
-            _logger = _loggerFactory.CreateLogger<RedisCartStore>();;
+            if (this._loggerFactory == null)
+		        this._loggerFactory = (ILoggerFactory) new LoggerFactory();
+            _logger = _loggerFactory.CreateLogger<RedisCartStore>();
+
+
             // Serialize empty cart into byte array.
             var cart = new Hipstershop.Cart();
             emptyCartBytes = cart.ToByteArray();
@@ -149,7 +152,7 @@ namespace cartservice.cartstore
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
-            if (durationSec > 1)
+            if (durationSec >= 1)
                 _logger.LogInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
         }
 
