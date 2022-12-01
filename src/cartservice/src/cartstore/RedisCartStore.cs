@@ -55,7 +55,7 @@ namespace cartservice.cartstore
                 builder.AddConsole();
                 builder.AddDebug();
             });        
-            ILogger<RedisCartStore> _logger = _loggerFactory.CreateLogger<RedisCartStore>();
+            _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
 
             // Serialize empty cart into byte array.
