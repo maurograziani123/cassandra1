@@ -127,7 +127,7 @@ namespace cartservice.cartstore
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-              if (activity.Duration.Seconds > 1)
+              if (activity.Duration.Seconds > 0.5)
                 System.Diagnostics.Trace.TraceInformation("Error : Span " + activity.DisplayName + " takes" + activity.Duration.Seconds + "seconds" );
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
             }
