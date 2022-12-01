@@ -49,8 +49,8 @@ namespace cartservice.cartstore
 
         public RedisCartStore(string redisAddress)
         {
-        
-            ILoggerFactory _loggerFactory = LoggerFactory.Create(builder =>
+         
+            _loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddConsole();
                 builder.AddDebug();
