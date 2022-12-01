@@ -32,6 +32,7 @@ namespace cartservice.cartstore
 
         readonly ILogger<RedisCartStore> _logger;
         readonly ILoggerFactory _loggerFactory;
+
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
 
@@ -46,11 +47,15 @@ namespace cartservice.cartstore
 
         private static ActivitySource source = new ActivitySource("cartservice.*");
 
-        public RedisCartStore(string redisAddress,ILoggerFactory loggerFactory = null)
+        public RedisCartStore(string redisAddress)
         {
-            if (this._loggerFactory == null)
-		        this._loggerFactory = (ILoggerFactory) new LoggerFactory();
-            _logger = _loggerFactory.CreateLogger<RedisCartStore>();
+        
+            ILoggerFactory _loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+            });        
+            ILogger<RedisCartStore> _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
 
             // Serialize empty cart into byte array.
