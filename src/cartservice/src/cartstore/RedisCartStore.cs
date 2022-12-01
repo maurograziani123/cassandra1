@@ -29,7 +29,7 @@ namespace cartservice.cartstore
     public class RedisCartStore : ICartStore
     {
 
-        private readonly ILogger _logger;
+        private readonly ILogger<RedisCartStore> _logger;
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
 
@@ -152,7 +152,7 @@ namespace cartservice.cartstore
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec > 1)
-                _logger.LogDebug("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
+                _logger.LogInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
