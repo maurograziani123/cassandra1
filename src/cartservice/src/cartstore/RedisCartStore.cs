@@ -139,7 +139,7 @@ namespace cartservice.cartstore
                  { "BaseNumer", baseNumber.ToString() },
               };                
               activity?.AddTag("baseNumber",baseNumber.ToString());
-              activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now));
+              activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
