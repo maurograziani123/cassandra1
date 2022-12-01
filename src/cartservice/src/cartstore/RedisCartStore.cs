@@ -39,8 +39,7 @@ namespace cartservice.cartstore
 
         private readonly ConfigurationOptions redisConnectionOptions;
 
-        private static ActivitySource source = new ActivitySource("cartservice");
-        public static readonly ActivitySource MyActivitySource = new("cartservice");
+        private static ActivitySource source = new ActivitySource("cartservice.*");
         public RedisCartStore(string redisAddress)
         {
             // Serialize empty cart into byte array.
@@ -120,7 +119,7 @@ namespace cartservice.cartstore
             }
         }
         public void mySlowFunction(float baseNumber) {
-            using (Activity activity = MyActivitySource.StartActivity("mySlowFunction"))
+            using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + source.Name);
 	          double result = 0;	

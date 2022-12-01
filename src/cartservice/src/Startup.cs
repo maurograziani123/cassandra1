@@ -62,7 +62,7 @@ namespace cartservice
                 .AddGrpcClientInstrumentation()
                 .AddHttpClientInstrumentation()
                 .SetResourceBuilder(resourceBuilder)
-                .AddSource("cartservice)")
+                .AddSource("cartservice.*")
                 .AddOtlpExporter());
 
             services.AddGrpc();
