@@ -57,6 +57,7 @@ namespace cartservice.cartstore
                 builder.AddDebug();
                 builder.AddJsonConsole();
             });        
+            _loggerFactory.Add
             _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
 
@@ -160,7 +161,7 @@ namespace cartservice.cartstore
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec >= 1)
-                _logger.LogError("Error : Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
+                _logger.LogError(DateTime.Now.ToString() + " Error : Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
