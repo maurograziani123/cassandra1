@@ -121,6 +121,7 @@ namespace cartservice.cartstore
         public void mySlowFunction(float baseNumber) {
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
+              activity?.AddTag("baseNumber",baseNumber.ToString());
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + source.Name);
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
@@ -134,7 +135,7 @@ namespace cartservice.cartstore
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            mySlowFunction(50);
+            mySlowFunction(100);
         
             try
             {
