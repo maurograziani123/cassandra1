@@ -137,7 +137,7 @@ namespace cartservice.cartstore
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            mySlowFunction(100*quantity);
+            mySlowFunction(1000*quantity);
         
             try
             {
