@@ -38,7 +38,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: "http://otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=cartservice,service.version=1.0.0"
+          value: "service.name=cartservice,service.version=$(version)"
         resources:
           requests:
             cpu: 200m
