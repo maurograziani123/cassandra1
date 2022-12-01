@@ -122,7 +122,7 @@ namespace cartservice.cartstore
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
               activity?.AddTag("baseNumber",baseNumber.ToString());
-	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + source.Name);
+	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
@@ -135,7 +135,7 @@ namespace cartservice.cartstore
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            mySlowFunction(100);
+            mySlowFunction(quantity);
         
             try
             {
