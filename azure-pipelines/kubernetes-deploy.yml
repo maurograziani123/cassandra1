@@ -365,6 +365,7 @@ stages:
             set -x # Echo Commands
             # Prem Yaml
             export REPO_PREFIX=$(repoPrefix)
+            export version=$(build.buildId)
             # Change Dir
             if [ $(serviceName) != "redis" ]
             then
