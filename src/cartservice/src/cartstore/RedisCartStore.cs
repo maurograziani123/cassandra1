@@ -46,15 +46,10 @@ namespace cartservice.cartstore
 
         private static ActivitySource source = new ActivitySource("cartservice.*");
 
-        public RedisCartStore(ILoggerFactory loggerFactory = null)
+        public RedisCartStore(string redisAddress,ILoggerFactory loggerFactory = null)
         {
-           _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
-           _logger = _loggerFactory.CreateLogger<RedisCartStore>();
-        }
-
-
-        public RedisCartStore(string redisAddress)
-        {
+            _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
+            _logger = _loggerFactory.CreateLogger<RedisCartStore>();;
             // Serialize empty cart into byte array.
             var cart = new Hipstershop.Cart();
             emptyCartBytes = cart.ToByteArray();
@@ -155,11 +150,7 @@ namespace cartservice.cartstore
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec > 1)
-            {
-                using (var logScope = _logger.BeginScope("Begin scope"))
-                {
-                    _logger.LogInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
-                }
+                _logger.LogInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)

@@ -20,6 +20,8 @@ using cartservice;
 using OpenTelemetry;
 using OpenTelemetry.Context.Propagation;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace cartservice.services
 {
@@ -30,7 +32,7 @@ namespace cartservice.services
 
         public CartService(ICartStore cartStore)
         {
-            _cartStore = cartStore;
+            _cartStore = cartStore;            
         }
 
         public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
