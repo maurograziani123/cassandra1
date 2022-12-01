@@ -57,7 +57,6 @@ namespace cartservice.cartstore
                 builder.AddDebug();
                 builder.AddJsonConsole();
             });        
-            _loggerFactory.Add
             _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
 
