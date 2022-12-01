@@ -21,6 +21,7 @@ using System.Diagnostics;
 using StackExchange.Redis;
 using Google.Protobuf;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 
 namespace cartservice.cartstore
@@ -28,6 +29,7 @@ namespace cartservice.cartstore
     public class RedisCartStore : ICartStore
     {
 
+        private readonly ILogger _logger;
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
 
@@ -41,6 +43,13 @@ namespace cartservice.cartstore
         private readonly ConfigurationOptions redisConnectionOptions;
 
         private static ActivitySource source = new ActivitySource("cartservice.*");
+
+        public RedisCartStore(ILogger<RedisCartStore> logger)
+        {
+           _logger = logger;
+        }
+
+
         public RedisCartStore(string redisAddress)
         {
             // Serialize empty cart into byte array.
@@ -140,8 +149,9 @@ namespace cartservice.cartstore
               DisplayName = activity.DisplayName;
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
             }
+            Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec > 1)
-                System.Diagnostics.Trace.TraceInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
+                _logger.LogDebug("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
