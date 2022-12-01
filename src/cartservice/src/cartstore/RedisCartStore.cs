@@ -145,6 +145,7 @@ namespace cartservice.cartstore
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
+              activity.Stop();
               durationSec = activity.Duration.Seconds;
               DisplayName = activity.DisplayName;
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
