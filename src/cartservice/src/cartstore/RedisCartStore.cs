@@ -20,6 +20,7 @@ using Grpc.Core;
 using System.Diagnostics;
 using StackExchange.Redis;
 using Google.Protobuf;
+using System.Collections.Generic;
 
 
 namespace cartservice.cartstore
@@ -119,25 +120,35 @@ namespace cartservice.cartstore
             }
         }
         public void mySlowFunction(float baseNumber) {
+            int durationSec = 0;
+            String DisplayName = "";
+
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
+              var eventTags = new Dictionary<string, object?>
+              {
+                 { "BaseNumer", baseNumber.ToString() },
+              };                
               activity?.AddTag("baseNumber",baseNumber.ToString());
+              activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now));
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-              if (activity.Duration.Seconds > 0.5)
-                System.Diagnostics.Trace.TraceInformation("Error : Span " + activity.DisplayName + " takes" + activity.Duration.Seconds + "seconds" );
+              durationSec = activity.Duration.Seconds;
+              DisplayName = activity.DisplayName;
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
             }
+            if (durationSec > 1)
+                System.Diagnostics.Trace.TraceInformation("Error : Span " + DisplayName + " takes" + durationSec.ToString() + "seconds" );
         }
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            mySlowFunction(1000*quantity);
+            mySlowFunction(200*quantity);
         
             try
             {
