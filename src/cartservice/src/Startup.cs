@@ -11,6 +11,7 @@ using cartservice.services;
 using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace cartservice
 {
@@ -66,6 +67,8 @@ namespace cartservice
                 .AddOtlpExporter());
 
             services.AddGrpc();
+
+            services.AddLogging() ;
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
