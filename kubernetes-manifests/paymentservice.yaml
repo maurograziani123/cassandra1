@@ -38,7 +38,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
           value: "otelcollector:4317"
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=paymentservice,service.version=1.0.0"         
+          value: "service.name=paymentservice,service.version=1.${version}.0"         
         readinessProbe:
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:50051"]
