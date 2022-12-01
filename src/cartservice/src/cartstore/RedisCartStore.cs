@@ -22,6 +22,7 @@ using StackExchange.Redis;
 using Google.Protobuf;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace cartservice.cartstore
@@ -29,7 +30,8 @@ namespace cartservice.cartstore
     public class RedisCartStore : ICartStore
     {
 
-        private readonly ILogger<RedisCartStore> _logger;
+        readonly ILogger<RedisCartStore> _logger;
+        readonly ILoggerFactory _loggerFactory;
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
 
@@ -44,9 +46,10 @@ namespace cartservice.cartstore
 
         private static ActivitySource source = new ActivitySource("cartservice.*");
 
-        public RedisCartStore(ILogger<RedisCartStore> logger)
+        public RedisCartStore(ILoggerFactory loggerFactory = null)
         {
-           _logger = logger;
+           _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
+           _logger = _loggerFactory.CreateLogger<RedisCartStore>();;
         }
 
 
