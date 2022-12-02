@@ -29,7 +29,6 @@ namespace cartservice
         public void ConfigureServices(IServiceCollection services)
         {         
 
-                
             string redisAddress = Configuration["REDIS_ADDR"];
             RedisCartStore cartStore = null;
             if (string.IsNullOrEmpty(redisAddress))
@@ -45,7 +44,7 @@ namespace cartservice
                 .CreateDefault()
                 .AddService("cartservice")
                 .AddAttributes(new Dictionary<string, object> {
-                    { "redis", redisAddress}
+                    { "redis", redisAddress},{"pod",Environment.MachineName}
                 })
                 .AddTelemetrySdk();  
 
