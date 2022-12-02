@@ -149,7 +149,7 @@ namespace cartservice.cartstore
               };                
               if (veryslow)
               {
-                Thread.Sleep(3000);
+                Thread.SpinWait(1000000);
               }
               activity?.AddTag("baseNumber",baseNumber.ToString());
               activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
