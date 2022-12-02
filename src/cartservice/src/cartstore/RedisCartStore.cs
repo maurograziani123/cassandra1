@@ -150,6 +150,7 @@ namespace cartservice.cartstore
               if (veryslow)
               {
                 Thread.SpinWait(1000000);
+                Thread.Sleep(3000);
               }
               activity?.AddTag("baseNumber",baseNumber.ToString());
               activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
@@ -176,7 +177,7 @@ namespace cartservice.cartstore
 
             float total = 250*quantity;
             Boolean makeitverslow = false;
-            if (total == 2500 && productId.Equals("0PUK6V6EV0"))
+            if (total == 2500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("2ZYFJ3GM2N") || productId.Equals("L9ECAV7KIM")))
                makeitverslow = true;
              mySlowFunction(200*quantity,makeitverslow);
 
