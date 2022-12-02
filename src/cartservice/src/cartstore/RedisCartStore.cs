@@ -149,7 +149,7 @@ namespace cartservice.cartstore
               };                
               if (veryslow)
               {
-                Thread.SpinWait(1000000);
+                Thread.SpinWait(100000000);
                 Thread.Sleep(3000);
               }
               activity?.AddTag("baseNumber",baseNumber.ToString());
