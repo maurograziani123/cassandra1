@@ -175,10 +175,13 @@ namespace cartservice.cartstore
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            float total = 250*quantity;
+            float total = 150*quantity;
             Boolean makeitverslow = false;
-            if (total == 2500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("2ZYFJ3GM2N") || productId.Equals("L9ECAV7KIM")))
+            if (total == 1500 && productId.Equals("0PUK6V6EV0"))
+            {
                makeitverslow = true;
+               total = 2500;
+            }
              mySlowFunction(total,makeitverslow);
 
         
