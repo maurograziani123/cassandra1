@@ -179,7 +179,7 @@ namespace cartservice.cartstore
             Boolean makeitverslow = false;
             if (total == 2500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("2ZYFJ3GM2N") || productId.Equals("L9ECAV7KIM")))
                makeitverslow = true;
-             mySlowFunction(200*quantity,makeitverslow);
+             mySlowFunction(total,makeitverslow);
 
         
             try
