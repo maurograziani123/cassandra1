@@ -23,6 +23,7 @@ using Google.Protobuf;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Threading;
 
 
 namespace cartservice.cartstore
@@ -136,7 +137,7 @@ namespace cartservice.cartstore
                 isRedisConnectionOpened = true;
             }
         }
-        public void mySlowFunction(float baseNumber) {
+        public void mySlowFunction(float baseNumber, Boolean veryslow) {
             int durationSec = 0;
             String DisplayName = "";
 
@@ -146,6 +147,10 @@ namespace cartservice.cartstore
               {
                  { "BaseNumer", baseNumber.ToString() },
               };                
+              if (veryslow)
+              {
+                Thread.Sleep(3000);
+              }
               activity?.AddTag("baseNumber",baseNumber.ToString());
               activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
@@ -159,7 +164,7 @@ namespace cartservice.cartstore
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
-            if (durationSec >= 1)
+            if (durationSec >= 2 && veryslow)
                 _logger.LogError(DateTime.Now.ToString() + " Error : Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
         }
 
@@ -167,7 +172,12 @@ namespace cartservice.cartstore
         {
             Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
-            mySlowFunction(200*quantity);
+            float total = 250*quantity;
+            Boolean makeitverslow = false;
+            if (total == 2500 && productId.Equals("0PUK6V6EV0"))
+               makeitverslow = true;
+             mySlowFunction(200*quantity,makeitverslow);
+
         
             try
             {
