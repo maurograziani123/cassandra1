@@ -36,6 +36,7 @@ namespace cartservice.cartstore
 
         private DateTime prev_date;
         private DateTime slowWindow;
+        private DateTime prev_slowWindow;
 
         private TimeSpan tsSW;
 
@@ -56,6 +57,7 @@ namespace cartservice.cartstore
         public RedisCartStore(string redisAddress)
         {
             prev_date = DateTime.Now;
+            prev_slowWindow =  DateTime.Now;
             slowWindow = DateTime.Now;
             tsSW = slowWindow - prev_date;
 
@@ -194,13 +196,11 @@ namespace cartservice.cartstore
              
             Console.WriteLine(" TS : " + ts.TotalMinutes.ToString() + " TSW : " + tsSW.TotalMinutes.ToString() + " Product " + productId + " Total :" + total); 
 
-            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 10)
+            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 25)
             {
                makeitverslow = true;
                total = 2500;
-               tsSW = (current_date - slowWindow );
-               tsSW = ts - tsSW;
-
+               
             }
              mySlowFunction(total,makeitverslow);
 
