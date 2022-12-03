@@ -196,7 +196,7 @@ namespace cartservice.cartstore
              
             Console.WriteLine(" TS : " + ts.TotalMinutes.ToString() + " TSW : " + tsSW.TotalMinutes.ToString() + " Product " + productId + " Total :" + total); 
 
-            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 25)
+            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 40)
             {
                makeitverslow = true;
                total = 2500;
