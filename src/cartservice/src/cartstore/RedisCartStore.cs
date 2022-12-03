@@ -37,6 +37,8 @@ namespace cartservice.cartstore
         private DateTime prev_date;
         private DateTime slowWindow;
 
+        private TimeSpan tsSW;
+
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
 
@@ -55,6 +57,7 @@ namespace cartservice.cartstore
         {
             prev_date = DateTime.Now;
             slowWindow = DateTime.Now;
+            tsSW = slowWindow - prev_date;
 
             _loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -186,14 +189,14 @@ namespace cartservice.cartstore
             DateTime current_date = DateTime.Now;
 
             TimeSpan ts = current_date - prev_date;
-            TimeSpan tsSW = current_date - slowWindow;
-            double DffMinSW = tsSW.TotalSeconds;
+            double DffMinSW = tsSW.TotalMinutes;
             double DiffMin = ts.TotalMinutes;
              
             if (total == 1500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 5)
             {
                makeitverslow = true;
                total = 2500;
+               tsSW = current_date - slowWindow;
             }
              mySlowFunction(total,makeitverslow);
 
