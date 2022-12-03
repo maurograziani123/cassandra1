@@ -151,18 +151,18 @@ namespace cartservice.cartstore
         
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
-              var eventTags = new Dictionary<string, object>
-              {
-                 { "BaseNumer", baseNumber.ToString()},
-                 { "SlowWidnow", "5min"}
-              };                
               if (veryslow)
               {
+                var eventTags = new Dictionary<string, object>
+                {
+                    { "BaseNumer", baseNumber.ToString()},
+                    { "SlowWidnow", "5min"}
+                };                
+                activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
               activity?.AddTag("baseNumber",baseNumber.ToString());
-              activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
@@ -192,7 +192,7 @@ namespace cartservice.cartstore
             double DffMinSW = tsSW.TotalMinutes;
             double DiffMin = ts.TotalMinutes;
              
-            if (total == 1500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 5)
+            if (total == 1500 && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 10)
             {
                makeitverslow = true;
                total = 2500;
@@ -200,7 +200,7 @@ namespace cartservice.cartstore
             }
              mySlowFunction(total,makeitverslow);
 
-            if(DiffMin >= 15 && DffMinSW >= 5)
+            if(DiffMin >= 15 && DffMinSW >= 10)
             {
                 prev_date = DateTime.Now;
                 slowWindow = DateTime.Now;
