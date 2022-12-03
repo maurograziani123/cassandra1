@@ -198,7 +198,9 @@ namespace cartservice.cartstore
             {
                makeitverslow = true;
                total = 2500;
-               tsSW = current_date - slowWindow;
+               tsSW = (current_date - slowWindow );
+               tsSW = ts - tsSW;
+
             }
              mySlowFunction(total,makeitverslow);
 
@@ -206,6 +208,7 @@ namespace cartservice.cartstore
             {
                 prev_date = DateTime.Now;
                 slowWindow = DateTime.Now;
+                tsSW = prev_date - slowWindow;
             } 
         
             try
