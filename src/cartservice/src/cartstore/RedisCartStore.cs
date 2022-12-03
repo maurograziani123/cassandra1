@@ -35,6 +35,7 @@ namespace cartservice.cartstore
         readonly ILoggerFactory _loggerFactory;
 
         private DateTime prev_date;
+        private DateTime slowWindow;
 
         private const string CART_FIELD_NAME = "cart";
         private const int REDIS_RETRY_NUM = 30;
@@ -53,6 +54,7 @@ namespace cartservice.cartstore
         public RedisCartStore(string redisAddress)
         {
             prev_date = DateTime.Now;
+            slowWindow = DateTime.Now;
 
             _loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -146,7 +148,7 @@ namespace cartservice.cartstore
         
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
-              var eventTags = new Dictionary<string, object?>
+              var eventTags = new Dictionary<string, object>
               {
                  { "BaseNumer", baseNumber.ToString() },
               };                
@@ -181,16 +183,24 @@ namespace cartservice.cartstore
             float total = 150*quantity;
             Boolean makeitverslow = false;
             DateTime current_date = DateTime.Now;
+
             TimeSpan ts = current_date - prev_date;
+            TimeSpan tsSW = current_date - slowWindow;
+            double DffMinSW = tsSW.TotalSeconds;
             double DiffMin = ts.TotalMinutes;
-            if (total == 1500 && productId.Equals("0PUK6V6EV0") && DiffMin >= 15)
+             
+            if (total == 1500 && (productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 5)
             {
                makeitverslow = true;
                total = 2500;
-               prev_date = DateTime.Now;
             }
              mySlowFunction(total,makeitverslow);
 
+            if(DiffMin >= 15 && DffMinSW >= 5)
+            {
+                prev_date = DateTime.Now;
+                slowWindow = DateTime.Now;
+            } 
         
             try
             {
