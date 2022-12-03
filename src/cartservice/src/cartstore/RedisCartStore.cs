@@ -192,7 +192,7 @@ namespace cartservice.cartstore
             double DffMinSW = tsSW.TotalMinutes;
             double DiffMin = ts.TotalMinutes;
              
-            if (total == 1500 && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 10)
+            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && DffMinSW <= 10)
             {
                makeitverslow = true;
                total = 2500;
