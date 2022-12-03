@@ -150,12 +150,13 @@ namespace cartservice.cartstore
             {            
               var eventTags = new Dictionary<string, object>
               {
-                 { "BaseNumer", baseNumber.ToString() },
+                 { "BaseNumer", baseNumber.ToString()},
+                 { "SlowWidnow", "5min"}
               };                
               if (veryslow)
               {
                 Thread.SpinWait(100000000);
-                Thread.Sleep(3000);
+                Thread.Sleep(4000);
               }
               activity?.AddTag("baseNumber",baseNumber.ToString());
               activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
