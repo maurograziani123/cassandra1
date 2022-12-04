@@ -57,9 +57,6 @@ namespace cartservice.cartstore
         public RedisCartStore(string redisAddress)
         {
             prev_date = DateTime.Now;
-            prev_slowWindow =  DateTime.Now;
-            slowWindow = DateTime.Now;
-            tsSW = slowWindow - prev_date;
 
             _loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -191,12 +188,11 @@ namespace cartservice.cartstore
             DateTime current_date = DateTime.Now;
 
             TimeSpan ts = current_date - prev_date;
-            double DffMinSW = tsSW.TotalMinutes;
             double DiffMin = ts.TotalMinutes;
              
             Console.WriteLine(" TS : " + ts.TotalMinutes.ToString() + " TSW : " + tsSW.TotalMinutes.ToString() + " Product " + productId + " Total :" + total); 
 
-            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 40)
+            if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 35)
             {
                makeitverslow = true;
                total = 2500;
@@ -204,11 +200,9 @@ namespace cartservice.cartstore
             }
              mySlowFunction(total,makeitverslow);
 
-            if(DiffMin >= 15 && DffMinSW >= 10)
+            if(DiffMin >= 15 && (DiffMin + 10) >= 35)
             {
                 prev_date = DateTime.Now;
-                slowWindow = DateTime.Now;
-                tsSW = prev_date - slowWindow;
             } 
         
             try
