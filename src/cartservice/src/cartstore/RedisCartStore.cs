@@ -158,6 +158,7 @@ namespace cartservice.cartstore
                     { "SlowWidnow", "5min"}
                 };                
                 activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
+                activity?.AddTag("Veryslow",baseNumber.ToString());
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
