@@ -152,9 +152,8 @@ namespace cartservice.cartstore
             {            
               if (veryslow)
               {
-                var eventTags = new Dictionary<string, object>
+                var eventTags = new Dictionary<string, object?>
                 {
-                    { "BaseNumer", baseNumber.ToString()},
                     { "SlowWidnow", "5min"}
                 };                
                 activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
