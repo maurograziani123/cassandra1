@@ -41,10 +41,10 @@ spec:
           value: "service.name=cartservice,service.version=1.${version}.0"
         resources:
           requests:
-            cpu: 200m
+            cpu: 500m
             memory: 64Mi
           limits:
-            cpu: 700m
+            cpu: 800m
             memory: 128Mi
         readinessProbe:
           initialDelaySeconds: 15
