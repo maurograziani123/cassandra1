@@ -198,7 +198,7 @@ namespace cartservice.cartstore
                total = 2500;
                
             }
-            mySlowFunction(total,makeitverslow);
+            //mySlowFunction(total,makeitverslow);
 
             if(DiffMin >= 15 && (DiffMin + 10) >= 35)
             {
