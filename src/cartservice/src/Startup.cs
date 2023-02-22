@@ -44,7 +44,7 @@ namespace cartservice
                 .CreateDefault()
                 .AddService("cartservice")
                 .AddAttributes(new Dictionary<string, object> {
-                    {"redis", redisAddress},{"pod",Environment.MachineName},{"container","cartservice"},{"service.name","cartservice"}
+                    {"redis", redisAddress},{"pod",Environment.MachineName},{"container","cartservice"},{"service.name","cartservice"},{"service","cartservice"}
                 })
                 .AddTelemetrySdk();  
 
