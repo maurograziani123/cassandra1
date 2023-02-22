@@ -161,7 +161,7 @@ namespace cartservice.cartstore
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
-              activity?.AddTag("baseNumber",baseNumber.ToString());
+              activity?.AddTag("Veryslow",baseNumber.ToString());
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
