@@ -28,7 +28,7 @@ spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
-      - name: server
+      - name: cartservice
         image: $REPO_PREFIX/cartservice:latest
         ports:
         - containerPort: 7070
