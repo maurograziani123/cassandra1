@@ -55,6 +55,7 @@ namespace cartservice
             services.AddSingleton<ICartStore>(cartStore);
 
             services.AddOpenTelemetryTracing((builder) => builder
+            // Auto Instrumentation using instrumentation libraries.
                 .AddRedisInstrumentation(
                     cartStore.GetConnection(),
                     options => options.SetVerboseDatabaseStatements = true)
