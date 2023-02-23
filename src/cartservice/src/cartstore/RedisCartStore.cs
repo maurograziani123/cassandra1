@@ -148,29 +148,24 @@ namespace cartservice.cartstore
             int durationSec = 0;
             String DisplayName = "";
         
+            //Custom Instrumentation example
             using (Activity activity = source.StartActivity("mySlowFunction"))
             {            
+              activity?.AddTag("Veryslow",baseNumber.ToString());
               if (veryslow)
               {
-                //var eventTags = new Dictionary<string, object?>
-                //{
-                //    { "SlowWidnow", "5min"}
-                //}//;                
-                //activity?.AddEvent(new("mySlowFunction", DateTimeOffset.Now,new(eventTags)));
-                activity?.AddTag("Veryslow",baseNumber.ToString());
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
-              activity?.AddTag("Veryslow",baseNumber.ToString());
 	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-              activity.Stop();
               durationSec = activity.Duration.Seconds;
               DisplayName = activity.DisplayName;
 	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
+              activity.Stop();              
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec >= 2 && veryslow)
