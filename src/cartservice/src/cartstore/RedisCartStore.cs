@@ -190,7 +190,7 @@ namespace cartservice.cartstore
             if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 35)
             {
                makeitverslow = true;
-               total = 2500;
+               total = 2508;
                
             }
             mySlowFunction(total,makeitverslow);
