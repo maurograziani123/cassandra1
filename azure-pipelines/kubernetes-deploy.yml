@@ -341,7 +341,8 @@ stages:
                 "setCloseCode" : true,
                 "attributes": {
                   "cmdb_ci": {
-                     "name": "$(service)"
+                     "name": "$(service)",
+                     "class" : "Mapped Application Service"
                   },
                   "business_service": {
                      "name" : "Boutique_MS"
