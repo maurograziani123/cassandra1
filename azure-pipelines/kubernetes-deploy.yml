@@ -38,6 +38,7 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
+             echo "Deplyoment ID $(deploymentID)"
              az aks update \
                    --resource-group olympus \
                    --name olympus \
