@@ -29,7 +29,7 @@ stages:
     jobs:
       - job: tag_cluster
         steps:
-        - bash: echo "Deplyoment ID $(DEPLOYMENTID)"
+        - bash: echo "Deplyoment ID $(deploymentID)"
         - task: AzureCLI@2
           displayName: Azure CLI
           inputs:
