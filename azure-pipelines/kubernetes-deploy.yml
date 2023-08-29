@@ -15,6 +15,9 @@ variables:
   serviceName: $(SERVICE_NAME)
   serviceNamespace: $(SERVICE_NAMESPACE)  
   deploymentID: $(deploymentID)
+  ARM_CLIENT_ID: 'df2b7fc9-2bba-48e1-a287-cf0314cfecaf'
+  ARM_CLIENT_SECRET: 'AqG8Q~rOhB53RvLyWlwacL08YNNPuZAIXSYEFcKs'
+  ARM_TENANT_ID: '8bcff170-9979-491e-8683-d8ced0850bad'
 
 pool:
   vmImage: ubuntu-latest
@@ -27,13 +30,14 @@ stages:
     jobs:
       - job: tag_cluster
         steps:
-        - task: AzureCLI@1
+        - task: AzureCLI@2
           displayName: Azure CLI
           inputs:
             azureSubscription: 'ServiceNow_Azure'
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
+             az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET)  --tenant $(ARM_TENANT_ID)'
              az aks update \
                    --resource-group olympus \
                    --name olympus \
