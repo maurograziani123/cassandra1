@@ -14,7 +14,7 @@ variables:
   repoPrefix: '$(REPO_PREFIX)'
   serviceName: '$(SERVICE_NAME)'
   serviceNamespace: '$(SERVICE_NAMESPACE)'
-  deploymentID: '$(DEPLOYMENTID)'
+  deploymentID: '$(deploymentID)'
   ARM_CLIENT_ID: 'df2b7fc9-2bba-48e1-a287-cf0314cfecaf'
   ARM_CLIENT_SECRET: 'AqG8Q~rOhB53RvLyWlwacL08YNNPuZAIXSYEFcKs'
   ARM_TENANT_ID: '8bcff170-9979-491e-8683-d8ced0850bad'
