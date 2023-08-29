@@ -30,7 +30,7 @@ stages:
         - task: AzureCLI@2
           displayName: Azure CLI
           inputs:
-            azureSubscription: "Company Name: ServiceNow, Inc.(3ab145ff-f9cd-433f-8533-d1b1ee24aee6)"
+            azureSubscription: 'ServiceNow_Azure'
             scriptType: ps
             scriptLocation: inlineScript
             inlineScript: |
