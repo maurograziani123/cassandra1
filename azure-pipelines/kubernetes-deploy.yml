@@ -31,7 +31,7 @@ stages:
           displayName: Azure CLI
           inputs:
             azureSubscription: 'ServiceNow_Azure'
-            scriptType: ps
+            scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
              az aks update \
