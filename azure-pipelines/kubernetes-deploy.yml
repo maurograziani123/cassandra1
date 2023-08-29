@@ -27,6 +27,7 @@ stages:
   ###                                 Tagging                                ###
   ##############################################################################
   - stage: tagging
+    pool: servicennow
     jobs:
       - job: tag_cluster
         steps:
