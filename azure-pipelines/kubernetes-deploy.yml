@@ -14,7 +14,7 @@ variables:
   repoPrefix: '$(REPO_PREFIX)'
   serviceName: '$(SERVICE_NAME)'
   serviceNamespace: '$(SERVICE_NAMESPACE)'
-  deploymentID: '$(deploymentID)'
+  vdeploymentid: '$(deploymentID)'
   ARM_CLIENT_ID: 'df2b7fc9-2bba-48e1-a287-cf0314cfecaf'
   ARM_CLIENT_SECRET: 'AqG8Q~rOhB53RvLyWlwacL08YNNPuZAIXSYEFcKs'
   ARM_TENANT_ID: '8bcff170-9979-491e-8683-d8ced0850bad'
@@ -29,7 +29,7 @@ stages:
     jobs:
       - job: tag_cluster
         steps:
-        - bash: echo "Deplyoment ID $(deploymentID)"
+        - bash: echo "Deplyoment ID $(vdeploymentid)"
         - task: AzureCLI@2
           displayName: Azure CLI
           inputs:
@@ -37,11 +37,11 @@ stages:
             scriptType: bash
             scriptLocation: inlineScript
             inlineScript: |
-             echo "Deplyoment ID $(deploymentID)"
+             echo "Deplyoment ID $(vdeploymentid)"
              az aks update \
                    --resource-group olympus \
                    --name olympus \
-                   --tags deploymentID=$(deploymentID)
+                   --tags deploymentid=$(vdeploymentid)
 
   ##############################################################################
   ###                                 RUN TESTS                              ###
