@@ -19,15 +19,13 @@ variables:
   ARM_CLIENT_SECRET: 'AqG8Q~rOhB53RvLyWlwacL08YNNPuZAIXSYEFcKs'
   ARM_TENANT_ID: '8bcff170-9979-491e-8683-d8ced0850bad'
 
-pool:
-  vmImage: ubuntu-latest
+pool: servicennow
 
 stages:
   ##############################################################################
   ###                                 Tagging                                ###
   ##############################################################################
   - stage: tagging
-    pool: servicennow
     jobs:
       - job: tag_cluster
         steps:
