@@ -14,11 +14,30 @@ variables:
   repoPrefix: '$(REPO_PREFIX)'
   serviceName: $(SERVICE_NAME)
   serviceNamespace: $(SERVICE_NAMESPACE)  
+  deploymentID: $(deploymentID)
 
 pool:
   vmImage: ubuntu-latest
 
 stages:
+  ##############################################################################
+  ###                                 Tagging                                ###
+  ##############################################################################
+  - stage: tagging
+    jobs:
+      - job: tag_cluster
+        steps:
+        - task: AzureCLI@2
+          displayName: Azure CLI
+          inputs:
+            azureSubscription: "Company Name: ServiceNow, Inc.(3ab145ff-f9cd-433f-8533-d1b1ee24aee6)"
+            scriptType: ps
+            scriptLocation: inlineScript
+            inlineScript: |
+             az aks update \
+                   --resource-group olympus \
+                   --name olympus \
+                   --tags deploymentID = $deploymentID
 
   ##############################################################################
   ###                                 RUN TESTS                              ###
