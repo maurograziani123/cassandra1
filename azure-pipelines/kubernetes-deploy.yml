@@ -37,7 +37,7 @@ stages:
              az aks update \
                    --resource-group olympus \
                    --name olympus \
-                   --tags deploymentID = $deploymentID
+                   --tags deploymentID=$(deploymentID)
 
   ##############################################################################
   ###                                 RUN TESTS                              ###
