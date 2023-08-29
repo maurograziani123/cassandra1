@@ -27,7 +27,7 @@ stages:
     jobs:
       - job: tag_cluster
         steps:
-        - task: AzureCLI@2
+        - task: AzureCLI@1
           displayName: Azure CLI
           inputs:
             azureSubscription: 'ServiceNow_Azure'
