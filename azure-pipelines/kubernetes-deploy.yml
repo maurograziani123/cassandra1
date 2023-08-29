@@ -30,10 +30,13 @@ stages:
     jobs:
       - job: tag_cluster
         steps:
-        - bash: |
-             sudo apt-get update
-             sudo apt-get install azure-cli -y
-             az login --service-principal --username $(ARM_CLIENT_ID) --password $(ARM_CLIENT_SECRET)  --tenant $(ARM_TENANT_ID)
+        - task: AzureCLI@2
+          displayName: Azure CLI
+          inputs:
+            azureSubscription: 'AzureServiceNow2'
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
              az aks update \
                    --resource-group olympus \
                    --name olympus \
