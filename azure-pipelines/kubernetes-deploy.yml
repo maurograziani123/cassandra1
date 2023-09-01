@@ -431,5 +431,5 @@ stages:
             kubernetesServiceEndpoint: 'olympus'
             namespace: $(serviceNamespace)
             command: 'label'
-            arguments: 'pods --selector=app=$(serviceName) -n $(serviceNamespace) deplyomentID=$(vdeploymentid)'    
+            arguments: 'pods --selector=app=$(serviceName) -n $(serviceNamespace) deplyomentID=$(vdeploymentid) -overwrite'    
          
