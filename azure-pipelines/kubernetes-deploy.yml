@@ -43,7 +43,7 @@ stages:
              az aks update \
                    --resource-group olympus \
                    --name olympus \
-                   --tags deploymentid=$(vdeploymentid)
+                   --tags deploymentID=$(vdeploymentid)
 
   ##############################################################################
   ###                                 RUN TESTS                              ###
@@ -423,3 +423,13 @@ stages:
             namespace: $(serviceNamespace)
             command: 'apply'
             arguments: '-f kubernetes-manifests/$(serviceName)-service.subst'            
+        - task: Kubernetes@1
+          name: LabePod
+          displayName: 'Label Pod'
+          inputs:
+            connectionType: 'Kubernetes Service Connection'
+            kubernetesServiceEndpoint: 'olympus'
+            namespace: $(serviceNamespace)
+            command: 'label'
+            arguments: 'pods -l ''app in ($(serviceName))'' -n $(serviceNamespace) deplyomentID=$(vdeploymentid)'    
+         
