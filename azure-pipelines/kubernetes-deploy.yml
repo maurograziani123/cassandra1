@@ -43,7 +43,7 @@ stages:
              az aks update \
                    --resource-group olympus \
                    --name olympus \
-                   --tags deploymentid=$(vdeploymentid)
+                   --tags deploymentID=$(vdeploymentid)
 
   ##############################################################################
   ###                                 RUN TESTS                              ###
@@ -431,5 +431,5 @@ stages:
             kubernetesServiceEndpoint: 'olympus'
             namespace: $(serviceNamespace)
             command: 'label'
-            arguments: 'pods --selector=app=$(serviceName) -n $(serviceNamespace) deplyomentid=$(vdeploymentid) --overwrite'    
+            arguments: 'pods --selector=app=$(serviceName) -n $(serviceNamespace) deplyomentID=$(vdeploymentid) --overwrite'    
          
