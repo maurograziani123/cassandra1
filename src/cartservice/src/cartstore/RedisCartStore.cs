@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Threading;
+using Microsoft.Extensions.Options;
 
 
 namespace cartservice.cartstore
@@ -156,6 +157,7 @@ namespace cartservice.cartstore
               if (veryslow)
               {
                 _logger.LogError(DateTime.Now.ToString() + " Fatale Error in Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
+                Console.Out.WriteLine("Slow It down using SpinWait and Thread sleep");
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
