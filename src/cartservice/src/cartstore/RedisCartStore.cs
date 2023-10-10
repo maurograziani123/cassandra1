@@ -64,6 +64,7 @@ namespace cartservice.cartstore
                 builder.AddConsole();
                 builder.AddDebug();
                 builder.AddJsonConsole();
+                builder.AddSystemdConsole();
             });        
             _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
@@ -145,7 +146,7 @@ namespace cartservice.cartstore
             }
         }
         public void mySlowFunction(float baseNumber, Boolean veryslow) {
-            int durationSec = 0;
+            double durationSec = 0;
             String DisplayName = "";
         
             //Custom Instrumentation example
@@ -154,6 +155,7 @@ namespace cartservice.cartstore
               activity?.AddTag("Veryslow",baseNumber.ToString());
               if (veryslow)
               {
+                _logger.LogError(DateTime.Now.ToString() + " Fatale Error in Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
@@ -162,9 +164,9 @@ namespace cartservice.cartstore
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-              durationSec = activity.Duration.Seconds;
+              durationSec = activity.Duration.TotalSeconds;
               DisplayName = activity.DisplayName;
-	          Console.Out.WriteLine("ERROR : mySlowFunction finished");
+	          Console.Out.WriteLine("ERROR : mySlowFunction finishing in " + activity.Duration.TotalSeconds);
               activity.Stop();              
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
