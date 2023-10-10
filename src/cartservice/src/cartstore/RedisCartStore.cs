@@ -153,20 +153,17 @@ namespace cartservice.cartstore
               activity?.AddTag("Veryslow",baseNumber.ToString());
               if (veryslow)
               {
-                _logger.LogError(DateTime.Now.ToString() + " Fatale Error in Span " + DisplayName + " took " + durationSec.ToString() + " seconds" );
-                Console.Out.WriteLine("Slow It down using SpinWait and Thread sleep");
+                _logger.LogError(DateTime.Now.ToString() + "Error Slowdown Is using SpinWait and Thread sleep in spam id : " + activity.Id );
                 Thread.SpinWait(100000000);
                 Thread.Sleep(4000);
               }
-	          Console.Out.WriteLine("ERROR : mySlowFunction started : " + baseNumber.ToString());
 	          double result = 0;	
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-	          Console.Out.WriteLine("ERROR : mySlowFunction finishing in " + activity.Duration.TotalSeconds);
               activity.Stop();   
               durationSec = activity.Duration.TotalSeconds;
-              DisplayName = activity.DisplayName;                         
+              DisplayName = activity.DisplayName;           
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec >= 2 && veryslow)
@@ -186,7 +183,7 @@ namespace cartservice.cartstore
             TimeSpan ts = current_date - prev_date;
             double DiffMin = ts.TotalMinutes;
              
-            Console.WriteLine(" TS : " + ts.TotalMinutes.ToString() + " TSW : " + tsSW.TotalMinutes.ToString() + " Product " + productId + " Total :" + total); 
+            _logger.LogInformation(DateTime.Now.ToString() + " Info TS : " + ts.TotalMinutes.ToString() + " TSW : " + tsSW.TotalMinutes.ToString() + " Product " + productId + " Total :" + total); 
 
             //if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")))
             if ((total == 1500 || total == 750) && (productId.Equals("6E92ZMYYFZ") || productId.Equals("0PUK6V6EV0") || productId.Equals("9SIQT8TOJO") ||  productId.Equals("2ZYFJ3GM2N")) && DiffMin >= 15 && (DiffMin + 10) <= 35)
