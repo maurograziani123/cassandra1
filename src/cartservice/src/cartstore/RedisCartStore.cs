@@ -62,10 +62,7 @@ namespace cartservice.cartstore
             _loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.ClearProviders();
-                builder.AddConsole();
-                builder.AddDebug();
                 builder.AddJsonConsole();
-                builder.AddSystemdConsole();
             });        
             _logger = _loggerFactory.CreateLogger<RedisCartStore>();
 
@@ -166,10 +163,10 @@ namespace cartservice.cartstore
 	          for (var i = Math.Pow(baseNumber, 2); i >= 0; i--) {		
 		          result += Math.Atan(i) * Math.Tan(i);
 	          };
-              durationSec = activity.Duration.TotalSeconds;
-              DisplayName = activity.DisplayName;
 	          Console.Out.WriteLine("ERROR : mySlowFunction finishing in " + activity.Duration.TotalSeconds);
-              activity.Stop();              
+              activity.Stop();   
+              durationSec = activity.Duration.TotalSeconds;
+              DisplayName = activity.DisplayName;                         
             }
             Console.Out.WriteLine("mySlowFunction took : " + durationSec.ToString());
             if (durationSec >= 2 && veryslow)
