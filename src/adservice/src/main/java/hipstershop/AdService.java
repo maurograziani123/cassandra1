@@ -27,11 +27,24 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.instrumentation.runtimemetrics.BufferPools;
+import io.opentelemetry.instrumentation.runtimemetrics.Classes;
+import io.opentelemetry.instrumentation.runtimemetrics.Cpu;
+import io.opentelemetry.instrumentation.runtimemetrics.GarbageCollector;
+import io.opentelemetry.instrumentation.runtimemetrics.MemoryPools;
+import io.opentelemetry.instrumentation.runtimemetrics.Threads;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+
+import javax.annotation.ManagedBean;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +84,7 @@ public final class AdService {
                 }));
     healthMgr.setStatus("", ServingStatus.SERVING);
   }
-
+  
   private void stop() {
     if (server != null) {
       healthMgr.clearStatus("");
@@ -193,9 +206,28 @@ public final class AdService {
   /** Main launches the server from the command line. */
   public static void main(String[] args) throws IOException, InterruptedException {
     // Start the RPC server. You shouldn't see any output from gRPC before this.
-    logger.info("AdService starting.");
     final AdService service = AdService.getInstance();
+    OpenTelemetrySdk openTelemetrySdk = AutoConfiguredOpenTelemetrySdk.builder()
+            .setResultAsGlobal(false)
+            .build()
+            .getOpenTelemetrySdk();
+    service.openTelemetry = openTelemetrySdk;
+
+        // Register runtime metrics instrumentation
+    BufferPools.registerObservers(openTelemetrySdk);
+    Classes.registerObservers(openTelemetrySdk);
+    Cpu.registerObservers(openTelemetrySdk);
+    GarbageCollector.registerObservers(openTelemetrySdk);
+    MemoryPools.registerObservers(openTelemetrySdk);
+    Threads.registerObservers(openTelemetrySdk);
+    logger.info("AdService starting.");
     service.start();
     service.blockUntilShutdown();
+  }
+
+  private static volatile OpenTelemetry openTelemetry = OpenTelemetry.noop();
+
+  public OpenTelemetry openTelemetry() {
+      return openTelemetry;
   }
 }

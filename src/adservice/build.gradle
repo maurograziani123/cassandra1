@@ -19,8 +19,8 @@ def jacksonVersion = "2.13.2"
 def protocVersion = "3.20.0"
 
 tasks.withType(JavaCompile) {
-    sourceCompatibility = JavaVersion.VERSION_18
-    targetCompatibility = JavaVersion.VERSION_18
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 ext {
@@ -44,6 +44,20 @@ dependencies {
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
                 "io.netty:netty-tcnative-boringssl-static:2.0.51.Final"
     }
+    // OpenTelemetry core
+    implementation platform('io.opentelemetry:opentelemetry-bom:1.22.0')
+    implementation platform('io.opentelemetry:opentelemetry-bom-alpha:1.22.0-alpha')
+    implementation 'io.opentelemetry:opentelemetry-api'
+    implementation 'io.opentelemetry:opentelemetry-sdk'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp-logs'
+    implementation 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure'
+
+    // OpenTelemetry instrumentation
+    implementation platform('io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:1.22.1-alpha')
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-runtime-metrics'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-log4j-appender-2.17'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-webmvc-6.0'
 }
 
 protobuf {
@@ -79,6 +93,7 @@ sourceSets {
 }
 
 startScripts.enabled = false
+mainClassName =  'hipstershop/AdService'
 
 // This to cache dependencies during Docker image building. First build will take time.
 // Subsequent build will be incremental.
