@@ -25,7 +25,7 @@ spec:
           mountPath: /conf/conf.yaml
           subPath: collector-config
         ports:
-       - containerPort: 1888
+        - containerPort: 1888
         - containerPort: 8888
         - containerPort: 8889
         - containerPort: 13133
